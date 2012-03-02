@@ -1,0 +1,1551 @@
+<html>  
+  <head>  
+    <title>Isometric trials</title>  
+	<style type="text/css">
+    *
+    {
+        border: 5px;
+        margin: 20px;
+        padding: 0;
+    }
+  
+    body
+    {
+        background-color: Black;
+        color: Silver;
+    }
+</style>
+    <script type="text/javascript">  
+	
+	
+	var tileSheet;
+	
+	var isometricMapInfo;
+	var diagMap;
+	var airController;
+	
+	var keyboard;
+	var mouse;
+	
+	var lastMouseOnTile;
+	
+	var canvasWidth, canvasHeight;
+	
+	var worldShift;
+	
+	var totalDraws;
+	var totalChecks;
+	var totalMouseHoverChecks;
+	
+	var millis;
+	var globalA;
+	
+	var player;
+	var uiSelect;
+
+	var aPoly;
+	
+	var circle;
+	var SELECTOR;
+	var selectorObj;
+	
+	var anim;
+	var braid;
+
+	var firstborn;
+	
+	var cnt;
+
+	
+	//INITIALIZE--------------------------------------
+	
+	function init(){  
+		canvas = document.getElementById('window');   
+		ctx = canvas.getContext('2d');  
+		globalA = 1;
+		//document.getElementById("tuxie").style.opacity = 0.2;
+		millis = new Date();
+		worldShift = new WorldShift();
+		mouse = new MouseInfo();
+		keyboard = new KeyboardInfo();
+		addListeners();
+		
+		loadImages();
+		//loadMap();
+		loadRandomMap();
+		loadMapIndex();
+		
+		loadAirController();
+		
+		//Testy things goes here LOL
+		totalDraws = 0;
+		totalChecks = 0;
+		totalMouseHoverChecks = 0;
+		//player = new Player(250, 100);
+		
+		
+		//IMPORTANT STUFF
+		//aPoly = [new Point(100, 100 + 16), new Point(100 + 32, 100 + 32), new Point(100 + 64, 100 + 16), new Point(100 + 32, 100)];
+		
+		uiSelect = new UserInterfaceSelect();
+		
+		firstborn = new Creature(200,100);
+		canvasWidth = 800;
+		canvasHeight = 600;
+		setInterval(gameLoop, 10);
+	}
+	
+	function randomBetween(x, y){
+		return Math.round(Math.random() * (y - x) + x);
+	
+	}
+	
+	function addListeners(){
+		document.addEventListener("keydown", keyHandlerDown, false);
+		document.addEventListener("keyup", keyHandlerUp, false);
+		canvas.addEventListener('mousemove', onMoveListener);
+		canvas.addEventListener('mousedown', onMouseClickListener);
+		canvas.addEventListener('mouseup', onMouseClickUpListener);
+	}
+	
+
+	function loadAirController(){
+
+		var cloudImages = new Array();
+		cl0 = new Image();
+		cl0.src = "cl0.png";
+		
+		cl1 = new Image();
+		cl1.src = "cl1.png";
+		
+		cl2 = new Image();
+		cl2.src = "cl2.png";
+		
+		cl3 = new Image();
+		cl3.src = "cl3.png";
+		
+		cl4 = new Image();
+		cl4.src = "cl4.png";
+		
+		cloudImages[0] = cl0;
+		cloudImages[1] = cl1;
+		cloudImages[2] = cl2;
+		cloudImages[3] = cl3;
+		cloudImages[4] = cl4;
+
+		airController = new AirController(cloudImages, 8, 20, 80);
+
+		//alert(airController.airSet.length);
+	}
+
+	//Initial map builder, can be improved
+	function loadMap(){
+		
+		//Tile(source, source_ix, source_iy, width, height, xCoord, yCoord)
+		
+		isometricMapInfo = new Array();
+		for(var i = 0; i < 200; i++){
+			var cacheArray = new Array();
+			for(var j = 0; j < 200; j++){
+				cacheArray[j] = new Tile(tileSheet, 0, 1, 64, 32,
+				32 * j + 20 + i * 32,
+				i * 32 + j * -16 + 100 + i * - 16);
+			
+			}
+			isometricMapInfo[i] = cacheArray;
+		}
+		
+		lastMouseOnTile = isometricMapInfo[4][4];
+		//Test
+		//lastMouseOnTile.addNewEnvironmentSameWidth(tileSheet, 0, 26, 64, 64 + 32 + 32 + 32 + 32);
+		
+		//lastMouseOnTile.addNewEnvironmentSameWidth(tileSheet, 1, 14, 64, 64);
+		//lastMouseOnTile.addNewEnvironmentSameWidth(tileSheet, 1, 14, 64, 64);
+		
+		//lastMouseOnTile.addNewEnvironmentSameWidth(tileSheet, 0, 1, 64, 32);
+		
+		//lastMouseOnTile.addNewEnvironmentSameWidth(tileSheet, 1, 14, 64, 64);
+		
+		diagMap = new Array();
+		diagMap = getDiagVersionOfMap(isometricMapInfo);
+	}
+	
+	function loadRandomMap(){
+		isometricMapInfo = new Array();
+		for(var i = 0; i < 20; i++){
+			var cacheArray = new Array();
+			for(var j = 0; j < 20; j++){
+				cacheArray[j] = new Tile(tileSheet, randomBetween(0, 6), 1, 64, 32,
+				32 * j + 20 + i * 32,
+				i * 32 + j * -16 + 100 + i * - 16);
+
+				var times = randomBetween(0, 5);
+				if(times == 0){
+					times = randomBetween(0, 3);
+					while(times > 0){
+					cacheArray[j].addNewEnvironmentSameWidth(tileSheet, randomBetween(1, 8), 14, 64, 64);
+					times--;
+				}
+				}
+				
+				
+			}
+			isometricMapInfo[i] = cacheArray;
+		}
+		lastMouseOnTile = isometricMapInfo[0][0];
+		//Test
+		//lastMouseOnTile.addNewEnvironmentSameWidth(tileSheet, 0, 26, 64, 64 + 32 + 32 + 32 + 32);
+		
+		//lastMouseOnTile.addNewEnvironmentSameWidth(tileSheet, 1, 14, 64, 64);
+		//lastMouseOnTile.addNewEnvironmentSameWidth(tileSheet, 1, 14, 64, 64);
+		
+		//lastMouseOnTile.addNewEnvironmentSameWidth(tileSheet, 0, 1, 64, 32);
+		//lastMouseOnTile.addNewEnvironmentSameWidth(tileSheet, 0, 1, 64, 32);
+		
+		diagMap = new Array();
+		diagMap = getDiagVersionOfMap(isometricMapInfo);
+	}
+	
+	function getDiagVersionOfMap(isoMap){
+		var baseArray = new Array();
+		var cacheArray = new Array();
+		
+		//DANGER
+		var xStabil = isometricMapInfo[0].length - 1;
+		var yStabil = 0;
+		
+		var xChange = xStabil;
+		var yChange = yStabil;
+		ctx.fillStyle = "rgb(100, 0, 0)";
+		ctx.font = "10pt Arial";
+		
+		var count = 0;
+		
+		/*
+		//Index Stuff
+		var indexX = 0;
+		var indexY = 0;
+		*/
+		
+		while(true){
+			//isometricMapInfo[yChange][xChange].renderObjectsOn();
+			cacheArray[cacheArray.length] = isoMap[yChange][xChange];
+			
+			/*
+			//Index Stuff
+			isoMap[yChange][xChange].diagMapY = indexY;
+			isoMap[yChange][xChange].diagMapX = indexX;
+			*/
+			
+			count++;
+			xChange++;
+			yChange++;
+			
+			//Index Stuff
+			//indexX++;
+
+			//limit
+			if(xChange >= isometricMapInfo[0].length || yChange >= isometricMapInfo.length){
+				//Terminate while
+				if(xChange == yChange){
+					baseArray[baseArray.length] = cacheArray;
+					cacheArray = new Array();
+					break;
+				}
+				else{
+					baseArray[baseArray.length] = cacheArray;
+					cacheArray = new Array();
+					yChange = yStabil;
+					xStabil--;
+					xChange = xStabil;
+					
+					/*
+					//Index stuff
+					indexX = 0;
+					indexY++;
+					*/
+				}
+			}
+		}
+		
+		xStabil = 0;
+		yStabil = 1;
+		
+		/*
+		//Index Stuff
+		indexX = 0;
+		indexY++;
+		*/
+		
+		yChange = yStabil;
+		xChange = xStabil;
+		
+		cacheArray = new Array();
+		while(true){
+			
+
+			cacheArray[cacheArray.length] = isoMap[yChange][xChange];
+			
+			/*
+			//Imdex Stýff
+			isoMap[yChange][xChange].diagMapY = indexY;
+			isoMap[yChange][xChange].diagMapX = indexX;
+			*/
+			
+			count++;
+			xChange++;
+			yChange++;
+			
+			//Index stuff
+			//indexX++;
+			
+			//limit
+			if(xChange >= isometricMapInfo[0].length || yChange >= isometricMapInfo.length){
+				baseArray[baseArray.length] = cacheArray;
+				cacheArray = new Array();
+				yStabil++;
+				yChange = yStabil;
+				xChange = xStabil;
+				
+				/*
+				//Index stuff
+				indexX = 0;
+				indexY++;
+				*/
+			
+			}
+			if(yStabil == isometricMapInfo.length){
+				baseArray[baseArray.length] = cacheArray;
+				cacheArray = new Array();
+				break;
+			}
+		
+		}
+		
+		return baseArray;
+	}
+	
+	function loadImages(){
+		tileSheet = new Image();
+		//tileSheet.src = "http://www.hizliupload.com/di-ZG0W.png";
+		//tileSheet.src = "akiftile.png";
+		//tileSheet.src = "sayfa22.png";
+		tileSheet.src = "http://www.hizliupload.com/di-ZG0W.png";
+	}
+
+	
+	//newly added
+	function loadMapIndex(){
+		for(var y = 0; y < isometricMapInfo.length; y++){
+			for(var x = 0; x < isometricMapInfo[y].length; x++){
+				isometricMapInfo[y][x].mapY = y;
+				isometricMapInfo[y][x].mapX = x;
+			}
+		}
+	}
+	//LISTENERS----------------------------------------------------
+	
+	
+	
+	function keyHandlerDown(e){
+		/*
+			1: 49
+			2: 50
+			3: 51
+		*/
+		var keyCode = e.keyCode;
+		
+		//a
+		if(keyCode == 65){
+		keyboard.a_key = true;
+		keyboard.isPressed = true;
+		}
+		//d
+		if(keyCode == 68){
+		keyboard.d_key = true;
+		keyboard.isPressed = true;
+		}
+		//w
+		if(keyCode == 87){
+		keyboard.w_key = true;
+		keyboard.isPressed = true;
+		}
+		//s
+		if(keyCode == 83){
+		keyboard.s_key = true;
+		keyboard.isPressed = true;
+		}
+		
+		/*
+		if(keyCode == 49 || keyCode == 50 || keyCode == 51){
+			uiSelect.tileSwap(keyCode);
+		}
+		*/
+		
+		else{
+			uiSelect.tileSwap(keyCode);
+		}
+	}
+	
+	function keyHandlerUp(e){
+		var keyCode = e.keyCode;
+		//a
+		if(keyCode == 65){keyboard.a_key = false;}
+		//d
+		if(keyCode == 68){keyboard.d_key = false;}
+		//w
+		if(keyCode == 87){keyboard.w_key = false;}
+		//s
+		if(keyCode == 83){keyboard.s_key = false;}
+	}
+	
+	function onMoveListener(e){
+		var x;
+		var y;
+		
+		x = e.offsetX;
+		y = e.offsetY;
+		mouse.setNewMxMy(x, y);
+		mouse.isMoved = true;
+		//mouseHover();
+	}
+	
+	function onMouseClickListener(e){
+		//lastMouseOnTile.addNewEnvironmentSameWidth(tileSheet, 0, 27, 64, 128 + 32);
+		//airController.createProcess();
+		var x;
+		var y;
+		x = e.offsetX;
+		y = e.offsetY;
+		mouse.setNewMxMy(x, y);
+		
+		mouse.isDown = true;
+		
+		/*
+		lastMouseOnTile.source_ix = uiSelect.ix;
+		lastMouseOnTile.source_iy = uiSelect.iy;
+		*/
+		
+		//alert(lastMouseOnTile.mapX + ", " + lastMouseOnTile.mapY);
+		
+		//player.xCoord = mouse.mx - worldShift.xShift;
+		//player.yCoord = mouse.my - worldShift.yShift;
+		
+	}
+	
+	function onMouseClickUpListener(e){
+		mouse.isDown = false;
+		uiSelect.oneObjectPut = false;
+	}
+	//OBJECTS----------------------------------------------------
+
+	function Creature(x,y){
+		this.xCoord = x;
+		this.yCoord = y; 
+
+		this.renderSelf = renderSelf;
+		this.getXCoord = getXCoord;
+		this.getYCoord = getYCoord;
+		this.makepath = makepath;
+		this.update = update;
+		this.init = init;
+
+		this.path = new Array();
+		this.init();
+
+		function init(){
+			//isometricMapInfo[10][10].source_iy = 2;
+
+			this.makepath();
+		}
+
+		//degisicek bu
+		function makepath(){
+			this.path.push(isometricMapInfo[5][6]);
+			//this.path.push(isometricMapInfo[2][8]);
+			this.path.push(isometricMapInfo[6][5]);
+			this.path.push(isometricMapInfo[0][0]);
+			this.path.push(isometricMapInfo[6][5]);
+			this.path.push(isometricMapInfo[11][12]);
+			this.path.push(isometricMapInfo[12][15]);
+		}
+
+		function update(){
+			var vecX;
+			var vecY;
+			var angle;
+			var speed = 1
+
+
+
+			if(this.path.length>0){
+				vecX = this.path[0].getXCoord() - this.getXCoord();
+				vecY = this.path[0].getYCoord() - this.getYCoord();
+				angle = Math.atan2(vecY, vecX);
+				//getTileAt(this.getXCoord(), this.getYCoord()).source_ix = 2;
+				//this.path[0].source_iy = 2;
+				//alert(this.path[0].getYCoord() + " " + this.getYCoord() + vecY);
+				//alert(angle);
+				this.xCoord += speed * Math.cos(angle);
+				this.yCoord += speed * Math.sin(angle);
+				//ctx.fillRect(this.path[0].getXCoord(), this.path[0].getYCoord(), 20, 20);
+				
+				if(distance(this.path[0].getXCoord(), this.path[0].getYCoord(), this.getXCoord(), this.getYCoord()) <= 1){
+
+					this.path.splice(0, 1);
+				}
+			}
+		}
+
+		function renderSelf(){
+			ctx.fillStyle = "rgb(250,250,250)"
+			ctx.fillRect(this.getXCoord(), this.getYCoord(), 20, 20);
+		}
+
+		function getXCoord(){
+			return this.xCoord + worldShift.xShift;
+		}
+		
+		function getYCoord(){
+			return this.yCoord + worldShift.yShift;
+		} 
+	}
+
+	/*
+		
+	*/
+	function Player(xCoord, yCoord){
+		this.xCoord = xCoord;
+		this.yCoord = yCoord;
+		this.drawn = false;
+		//methods
+		this.getXCoord = getXCoord;
+		this.getYCoord = getYCoord;
+		this.renderSelf = renderSelf;
+		
+		
+		function getXCoord(){
+			return this.xCoord + worldShift.xShift;
+
+		}
+		
+		function getYCoord(){
+			return this.yCoord + worldShift.yShift;
+		}
+		
+		function renderSelf(){
+			ctx.fillStyle = "rgb(200, 200, 200)";
+			ctx.fillRect(this.getXCoord() - 12, this.getYCoord() - 50, 25, 50);
+			
+			/*
+			ctx.fillText(this.xCoord, 300, 100);
+			ctx.fillText(worldShift.xShift, 400, 100);
+			*/
+		}
+	
+	}
+	
+	
+	/*
+		Tile Object-----------------------------------------
+		source: An Image that contains the required tile in it
+		source_ix: A number that refers to the tile's x position in sheet
+		source_iy: A number that refers to the tile's y position in sheet
+		width: A number that is the width of tile image
+		height: A number that is the height of tile image
+		
+	*/
+	function Tile(source, source_ix, source_iy, width, height, xCoord, yCoord){
+		//Variables
+		this.source = source;
+		this.source_ix = source_ix;
+		this.source_iy = source_iy;
+		this.width = width;
+		this.height = height;
+		this.xCoord = xCoord;
+		this.yCoord = yCoord;
+		
+		this.bounds = [new Point(this.xCoord, this.yCoord + this.height/2), new Point(this.xCoord + this.width/2, this.yCoord + this.height), 
+		new Point(this.xCoord + this.width, this.yCoord + this.height/2), new Point(this.xCoord + this.width/2, this.yCoord)];
+		
+		//newly added
+		var mapY;
+		var mapX;
+		
+		/*
+		//Index stuff
+		var diagMapY;
+		var diagMapX;
+		*/
+		
+		this.isMouseOn = false;
+		this.objectsOn = new Array();
+		
+		//Methods
+		this.renderSelf = renderSelf;
+		this.renderSelfLighted = renderSelfLighted;
+		this.renderObjectsOn = renderObjectsOn;
+		this.inScreen = inScreen;
+		this.addNewEnvironmentSameWidth = addNewEnvironmentSameWidth;
+		
+		this.getXCoord = getXCoord;
+		this.getYCoord = getYCoord;
+		this.getExactBounds = getExactBounds;
+		
+		function getExactBounds(){
+			var cache = new Array();
+			
+			for(var i = 0; i < this.bounds.length; i++){
+				cache[i] = new Point(this.bounds[i].px + worldShift.getXShift(), this.bounds[i].py + worldShift.getYShift());
+			}
+			return cache;
+		}
+		
+		function getXCoord(){
+			return this.xCoord + worldShift.getXShift();
+		}
+		
+		function getYCoord(){
+			return this.yCoord + worldShift.getYShift();
+		}
+			
+		
+		function renderSelf(){
+			totalDraws += 1;
+			//alert(this.diagMapX + ", " + this.diagMapY);
+			//alert(diagMap[4][2].diagMapY);
+			
+			if(this.inScreen()){
+				
+				ctx.drawImage(this.source, 
+					this.source_ix * this.width,
+					this.source_iy * this.height,
+					this.width, this.height,
+					this.getXCoord(), this.getYCoord(),
+					this.width, this.height);
+
+				if(this.isMouseOn){this.renderSelfLighted("rgba(225, 225, 125, 0.4)");}
+				
+				ctx.fillStyle = "rgb(0, 0, 0)";
+				
+				//Old version
+				//ctx.fillText(this.diagMapX + ", " + this.diagMapY, this.getXCoord() + 32, this.getYCoord() + 16);
+				//ctx.fillText(this.mapX + ", " + this.mapY, this.getXCoord() + 32, this.getYCoord() + 16);
+				
+			}
+		}
+		
+		function renderSelfLighted(rgba){
+			ctx.fillStyle = rgba;
+			ctx.beginPath();
+			
+			var theBounds = this.getExactBounds();
+			
+			ctx.moveTo(theBounds[0].px, theBounds[0].py);
+			for(var i = 0; i < theBounds.length; i++){
+				ctx.lineTo(theBounds[i].px, theBounds[i].py);
+			}
+			ctx.fill();
+			/*
+			ctx.moveTo(this.getXCoord() - 1, this.getYCoord() + this.height/2);
+			ctx.lineTo(this.getXCoord() + this.width/2, this.getYCoord() + this.height + 1);
+			ctx.lineTo(this.getXCoord() + this.width + 2, this.getYCoord() + this.height/2);
+			ctx.lineTo(this.getXCoord() + this.width/2, this.getYCoord());
+			ctx.fill();
+			*/
+		}
+		
+		function renderObjectsOn(){	
+			for(var i = 0; i < this.objectsOn.length; i++){
+				this.objectsOn[i].renderSelf();
+				if(this.isMouseOn && i == this.objectsOn.length - 1){this.objectsOn[i].renderSelfLighted("rgba(225, 225, 125, 0.4)");}
+			}
+			
+		}
+		
+		function inScreen(){
+			return this.getXCoord() >= -64 && this.getXCoord() <= canvasWidth && this.getYCoord() <= canvasHeight && this.getYCoord() >= -32;
+		}
+	
+		function addNewEnvironmentSameWidth(source, source_ix, source_iy, width, height){
+			//There is no environment on yet
+		
+			if(this.objectsOn.length == 0){
+				//alert(1);
+				var yDiff = this.height - height;
+				this.objectsOn[0] = new Environment(source, source_ix, source_iy, width, height, 0, yDiff, this);
+			}
+			
+			else{
+				
+				var yDiff = 32 - height;
+				yDiff = this.objectsOn[this.objectsOn.length - 1].yDiff + yDiff;
+				this.objectsOn[this.objectsOn.length] = new Environment(source, source_ix, source_iy, width, height, 0, yDiff, this);
+				
+			}
+		}
+	
+	}
+	
+	
+	/*
+		Environment Object-----------------------------------
+		source: An Image that contains the required tile in it
+		source_ix: A number that refers to the tile's x position in sheet
+		source_iy: A number that refers to the tile's y position in sheet
+		width: A number that is the width of tile image
+		height: A number that is the height of tile image
+		xCoord: A number that represents image's X coordinate on screen
+		yCoord: A number that represents image's Y coordinate on screen
+		**boundTile: A Tile object that this environment is on
+	*/
+	
+	
+	function Environment(source, source_ix, source_iy, width, height, xDiff, yDiff, boundTile){
+		//Variables	
+		this.source = source;
+		this.source_ix = source_ix;
+		this.source_iy = source_iy;
+		this.width = width;
+		this.height = height;
+		this.xDiff = xDiff;
+		this.yDiff = yDiff;
+		this.boundTile = boundTile;
+		//Methods
+		this.renderSelf = renderSelf;
+		this.renderSelfLighted = renderSelfLighted;
+		this.inScreen = inScreen;
+		
+		this.getXCoord = getXCoord;
+		this.getYCoord = getYCoord;
+		
+		//Prototype
+		function renderSelfLighted(rgba){
+			var xCoord = this.xDiff + this.boundTile.getXCoord();
+			var yCoord = this.yDiff + this.boundTile.getYCoord();
+			ctx.fillStyle = rgba;
+			ctx.beginPath();
+			ctx.moveTo(xCoord - 1, yCoord + 32 /2);
+			ctx.lineTo(xCoord + 64/2, yCoord + 32 + 1);
+			ctx.lineTo(xCoord + 64 + 2, yCoord + 32/2);
+			ctx.lineTo(xCoord + 64/2, yCoord);
+			ctx.fill();
+		}
+		
+		function renderSelf(){
+			if(this.inScreen()){
+				if(this.boundTile.isMouseOn){
+					ctx.globalAlpha = 0.5;
+				}
+				
+				ctx.drawImage(this.source, 
+					this.source_ix * 64, //These constants are based on tilesheet resolution
+					this.source_iy * 32,
+					this.width, this.height,
+					this.xDiff + this.boundTile.getXCoord(), this.yDiff + this.boundTile.getYCoord(),
+					this.width, this.height);
+				ctx.globalAlpha = globalA;
+				
+				//Coordinate information
+				//ctx.fillText(this.getXCoord() + ", " + this.getYCoord(),  this.getXCoord() + this.width/2, this.getYCoord());
+				
+			}
+		}
+		
+		function getXCoord(){
+			return this.xDiff + this.boundTile.getXCoord();
+		}
+		
+		function getYCoord(){
+			return this.yDiff + this.boundTile.getYCoord();
+		}
+		
+		/*
+		function inScreen(){
+			return this.boundTile.getXCoord() >= -64 && 
+			this.boundTile.getXCoord() <= canvasWidth && this.boundTile.getYCoord() <= canvasHeight && 
+			this.boundTile.getYCoord() >= -32;
+		}
+		*/
+		
+		function inScreen(){
+			return this.getXCoord() >= -64 && 
+			this.getXCoord() <= canvasWidth && this.getYCoord() <= canvasHeight && 
+			this.getYCoord() >= -32;
+		}
+		
+		
+		
+	}
+	
+	
+	/*
+		KeyboardInfo Object-----------------------------------------
+		a_key: A boolean that tells "a" key is pressed by user
+		d_key: A boolean that tells "d" key is pressed by user
+		s_key: A boolean that tells "s" key is pressed by user
+		w_key: A boolean that tells "w" key is pressed by user
+		isPressed: A boolean that tells if a key is pressed during last gameloop
+	*/
+	function KeyboardInfo(){
+		this.a_key = false;
+		this.d_key = false;
+		this.s_key = false;
+		this.w_key = false;
+		this.isPressed = false;
+	}
+	
+	/*
+		MouseInfo Objects------------------------------------------
+		mx: An integer that is the x position of mouse in the canvas
+		my: An integer that is the y position of mouse in the canvas
+		isDown: A boolean that shows if the mouse button is down
+		isMoved: A boolean tells if user moved the mouse within the loop time
+	*/
+	function MouseInfo(){
+		//Variables
+		this.mx = 0;
+		this.my = 0;
+		this.isDown = false;
+		this.isMoved = false;
+		//Methods
+		this.setNewMxMy = setNewMxMy;
+		function setNewMxMy(newMx, newMy){
+			this.mx = newMx;
+			this.my = newMy;
+		}	
+		
+	}
+	
+	
+	/*
+		WorldShift Objects
+		xShift:	An integer that shows how much x coordinate is shifted
+		yShift: An integer that shows how much y coordinate is shifted
+	*/
+	
+	function WorldShift(){
+		//Variables
+		this.xShift = 0;
+		this.yShift = 0;
+		
+		//Methods
+		this.getXShift = getXShift;
+		this.getYShift = getYShift;
+		
+		function getXShift(){
+			return this.xShift;
+		}
+		
+		function getYShift(){
+			return this.yShift;
+		}
+		
+	}
+
+	
+	/*
+		UserInterfaceSelect
+	
+	*/
+	function UserInterfaceSelect(){
+		this.ix = 0;
+		this.iy = 0;
+		
+		this.tileOn = true;
+		this.oneObjectPut = false;
+		
+		this.tileSwap = tileSwap;
+		
+		
+		function tileSwap(keyCode){
+			
+			/*
+			sagOk: 39
+			solOk: 37
+			yukariOk: 38
+			asagiOk:40
+			*/
+			
+			
+			if(keyCode == 37){
+				this.ix--;
+				
+			}
+			
+			
+			else if(keyCode == 38){
+				this.iy -= 1;
+			}
+			
+			else if(keyCode == 39){
+				this.ix++;
+			}
+			
+			else if(keyCode == 40){
+				this.iy += 1;
+			}
+			
+			else if(keyCode == 82){
+				this.iy = 0;
+				this.ix = 0;
+			}
+			
+			else if(keyCode == 67){
+				this.tileOn = !this.tileOn;
+			}
+		}
+		
+		
+		/*
+		function tileSwap(keyCode){
+			if(keyCode == 49){
+				if(this.iy == 0){
+					if(this.ix < 1){
+						this.ix++;
+					}
+					else{
+						this.ix = 0;
+					}
+				}
+				else{
+					this.iy = 0;
+					this.ix = 0;
+				}
+			}
+			
+			if(keyCode == 50){
+				if(this.iy == 2){
+					if(this.ix < 2){
+						this.ix++;
+					}
+					else{
+						this.ix = 0;
+					}
+				}
+				else{
+					this.iy = 2;
+					this.ix = 0;
+				}
+			}
+			
+			if(keyCode == 51){
+				if(this.iy == 4){
+					if(this.ix < 2){
+						this.ix++;
+					}
+					else{
+						this.ix = 0;
+					}
+				}
+				else{
+					this.iy = 4;
+					this.ix = 0;
+				}
+			}
+			
+		
+		}
+		*/
+	
+	}
+	
+	/*
+		AirEnvironment Objects
+		
+		source
+		source_ix
+		source_iy
+		width
+		height
+		xCoord
+		yCoord
+		xSpeed;
+		ySpeed;
+	*/
+	function AirEnvironment(source, source_ix, source_iy, width, height, xCoord, yCoord, xSpeed, ySpeed){
+		//variables
+		this.source = source;
+		this.source_ix = source_ix;
+		this.source_iy = source_iy;
+		this.width = width;
+		this.height = height;
+		this.xCoord = xCoord;
+		this.yCoord = yCoord;
+		this.xSpeed = xSpeed;
+		this.ySpeed = ySpeed;
+		this.alpha = 0;
+		
+		this.limitX = this.xCoord + randomBetween(60, 300);
+		
+		//methods
+		this.getXCoord = getXCoord;
+		this.getYCoord = getYCoord;
+		this.renderSelf = renderSelf;
+		
+		function renderSelf(){
+			ctx.globalAlpha = this.alpha;
+			ctx.drawImage(this.source, 
+				this.source_ix * 64,
+				this.source_iy * 32,
+				this.width, this.height,
+				this.getXCoord(), this.getYCoord(),
+				this.width, this.height);
+			ctx.globalAlpha = 1;
+			
+	
+		}
+		
+		
+		function getXCoord(){
+			return this.xCoord + (worldShift.xShift * 7 / 5);
+		}
+		
+		function getYCoord(){
+			return this.yCoord + worldShift.yShift * 7 / 5;
+		}
+	
+	}
+	
+	
+	/*
+		AirController Object
+		
+		imageSet
+		maxQuantity
+		minX
+		maxX
+
+	*/
+	function AirController(imageSet, maxQuantity, minX, maxX){
+		//variables
+		this.imageSet = imageSet;
+		this.maxQuantity = maxQuantity;
+		this.minX = minX;
+		this.maxX = maxX;
+		this.airSet = new Array();
+		this.cooldown = 2000;
+		this.currentProgress = 0;
+		this.lastCheck = new Date();
+		
+		//methods
+		this.renderAir = renderAir;
+		this.updateAir = updateAir;
+		this.createProcess = createProcess;
+		
+		this.updateLastCheck = updateLastCheck;
+		this.getTimePassed = getTimePassed;
+		
+		function updateLastCheck(){
+			this.lastCheck = new Date();
+		}
+		
+		function getTimePassed(){
+			var d = new Date();
+			return  d.getTime() - this.lastCheck.getTime();
+		}
+		
+		function renderAir(){
+			for(var i = 0; i < this.airSet.length; i++){
+				this.airSet[i].renderSelf();
+			}
+		}
+		
+		function updateAir(){
+			this.currentProgress += this.getTimePassed();
+			
+			
+			for(var i = 0; i < this.airSet.length; i++){
+				this.airSet[i].xCoord += this.airSet[i].xSpeed * this.getTimePassed() / 1000;
+				this.airSet[i].yCoord += this.airSet[i].ySpeed * this.getTimePassed() / 1000;
+				if(this.airSet[i].alpha < 0.4 && this.airSet[i].xCoord < this.airSet[i].limitX){
+					this.airSet[i].alpha += this.getTimePassed() * 0.2 / 1000;
+				}
+				
+				else if(this.airSet[i].xCoord > this.airSet[i].limitX){
+					this.airSet[i].alpha -= this.getTimePassed() * 0.2 / 1000;
+					if(this.airSet[i].alpha < 0){	
+						this.airSet.splice(i, 1);
+						
+					}
+				}
+			}
+			
+			if(this.airSet.length < this.maxQuantity && this.currentProgress >= this.cooldown){
+				this.currentProgress = 0;
+				this.createProcess();
+			}
+			
+			this.updateLastCheck();
+		}
+		
+		function createProcess(){
+			
+			var theImage = this.imageSet[randomBetween(0, 4)];
+			this.airSet[this.airSet.length] = new AirEnvironment(theImage , 0, 0, theImage.width
+			, theImage.height, randomBetween(-200, canvasWidth - 50) - worldShift.xShift * 7 / 5, 
+			randomBetween(-50, canvasHeight) - worldShift.yShift * 7 / 5, randomBetween(this.minX, this.maxX), 0);
+			
+			
+		}
+		
+		
+	}
+	
+	
+	function Point(px, py){
+		this.px = px;
+		this.py = py;
+	}
+	
+	
+	
+	
+	//UPDATE & GAMELOGIC RELATED--------------------------------------------
+	
+	function update(){
+		userKeyUpdate();
+		airController.updateAir();
+		
+		if(mouse.isDown && uiSelect.tileOn){
+			lastMouseOnTile.source_ix = uiSelect.ix;
+			lastMouseOnTile.source_iy = uiSelect.iy;
+		}
+		
+		else if(mouse.isDown && !uiSelect.tileOn && !uiSelect.oneObjectPut){
+			lastMouseOnTile.addNewEnvironmentSameWidth(tileSheet, 8, 7, 64, 128);
+			uiSelect.oneObjectPut = true;
+		}
+		
+	}
+	
+	function userKeyUpdate(){
+		if(keyboard.a_key){
+			worldShift.xShift += 5;
+			//shiftMap(5, 0);
+			//mouseHover();
+		}
+		if(keyboard.d_key){
+			worldShift.xShift += -5;
+			//shiftMap(-5, 0);
+			//mouseHover();
+		}
+		if(keyboard.w_key){
+			worldShift.yShift += 5;
+			//shiftMap(0, 5);
+			//mouseHover();
+		}
+		if(keyboard.s_key){
+			worldShift.yShift += -5;
+			//shiftMap(0, -5);
+			//mouseHover();
+		}
+	
+		//mouseHover();
+	}
+	
+	function mouseHover(){
+		var theTile = getTileAt(mouse.mx, mouse.my);
+		if(theTile != false){
+			lastMouseOnTile.isMouseOn = false;
+			lastMouseOnTile = theTile;
+			lastMouseOnTile.isMouseOn = true;
+		}
+
+	}
+	
+	function getTileAt(x, y){
+		cnt = 0;
+		for(var i = 0; i < diagMap.length; i++){
+			for(var j = 0; j < diagMap[i].length; j++){
+				cnt  = cnt + 1;
+				var theTile = diagMap[i][j];
+				
+				if(theTile.getYCoord() - 64 > y){
+					return false;
+				}
+				if(theTile.getYCoord() + 64 < y){
+					var diff = y - theTile.getYCoord();
+					diff = Math.floor(diff / 32);
+					i += diff - 1;
+					break;
+					//j = 0;
+				}
+				if(x - theTile.getXCoord() < 0){
+					break;
+				}
+				if(theTile.getXCoord() + 128 < x){
+					var diff = x - theTile.getXCoord();
+					diff = Math.floor(diff / 64);
+					j += diff - 1;
+					if(j >= diagMap[i].length){
+						return false;
+					}
+				}
+				//otherwise, check if the mouse is inside the tile.
+				if(isPointInside(diagMap[i][j], x, y)){
+					//lastMouseOnTile.isMouseOn = false;
+					//diagMap[i][j].isMouseOn = true;
+					//lastMouseOnTile = diagMap[i][j];
+					return diagMap[i][j];
+				}
+			}
+		}
+		return false;
+	}
+		
+	//RENDER----------------------------------------------------
+	function draw(){
+		clearScreen();
+		drawBaseTileLayer();
+		drawObjectsOn();
+		//player.renderSelf();
+		firstborn.update();
+		
+		airController.renderAir();
+
+		drawUI();
+		ctx.fillText(cnt, 100, 100);
+		/*
+		ctx.beginPath();
+		ctx.moveTo(aPoly[0].px , aPoly[0].py);
+		for(var i = 1; i < aPoly.length; i++){
+			ctx.lineTo(aPoly[i].px, aPoly[i].py);
+		}
+		ctx.fill();
+		
+
+		if(pointInPolygon(new Point(mouse.mx, mouse.my), aPoly)){
+			ctx.fillRect(500, 400, 20, 20);
+		}
+		*/
+		
+		
+		//player.drawn = false;
+	}
+	
+	function drawObjectsOn(){
+		var cacheTile;
+		for(var i = 0; i < diagMap.length; i++){
+			for(var j = 0; j < diagMap[i].length; j++){
+				cacheTile = diagMap[i][j];
+				if(cacheTile.getYCoord() < - 32){
+					i += makePositive(Math.floor(cacheTile.getYCoord() / 32) + 2);
+					break;
+				}
+				
+				if(cacheTile.getYCoord() > canvasHeight){
+					return;
+					//i = diagMap.length;
+					//continue;
+				}
+				
+				if(cacheTile.getXCoord() > canvasWidth){
+					j = diagMap[i].length;
+					continue;
+				}
+				
+				// -32 yapýnca acaip saçma bi hatalar browser takiliyo
+				if(cacheTile.getXCoord() < -64){
+					j = makePositive(Math.floor(cacheTile.getXCoord() / 64) + 2);
+					continue;
+				}		
+				
+				cacheTile.renderObjectsOn();
+				
+				
+				if(cacheTile.getYCoord() + 16 - firstborn.getYCoord() <= 32
+				&& cacheTile.getYCoord() + 16 - firstborn.getYCoord() >= 0){
+					firstborn.renderSelf();
+				}
+				
+			}
+		}
+	}
+	
+	function drawBaseTileLayer(){
+		var cacheTile;
+		for(var i = 0; i < diagMap.length; i++){
+			for(var j = 0; j < diagMap[i].length; j++){
+				cacheTile = diagMap[i][j];
+				
+				totalChecks += 1;
+				
+				//jump to view point
+				
+				if(cacheTile.getYCoord() < - 32){
+					i += makePositive(Math.floor(cacheTile.getYCoord() / 32) + 2);
+					/*
+					if(i >= diagMap.length){
+						return;
+					}
+					*/
+					break;
+				}
+				
+	
+				if(cacheTile.getYCoord() > canvasHeight){
+					return;
+					//i = diagMap.length;
+					//continue;
+				}
+				
+				if(cacheTile.getXCoord() > canvasWidth){
+					j = diagMap[i].length;
+					continue;
+				}
+				
+				// -32 yapýnca acaip saçma bi hatalar browser takiliyo
+				if(cacheTile.getXCoord() < -64){
+					j = makePositive(Math.floor(cacheTile.getXCoord() / 64) + 2);
+					continue;
+				}		
+			
+				cacheTile.renderSelf();
+				
+				//cacheTile.renderObjectsOn();
+				/*
+				if(!player.drawn && cacheTile.getYCoord() + 16 - player.getYCoord() <= 64
+				&& cacheTile.getYCoord() + 16 - player.getYCoord() >= 32){
+					
+					player.renderSelf();
+					player.drawn = true;
+				}
+				*/
+			}
+		}
+		
+	}
+	
+	function clearScreen(){
+		ctx.fillStyle = "rgb(0, 10, 5)";
+		ctx.fillRect(0, 0, canvasWidth, canvasHeight);
+	}
+	
+	function drawUI(){
+		ctx.fillStyle = "rgb(0, 0, 0)";
+		ctx.fillRect(800, 0, 200, 600);
+		
+		ctx.fillStyle = "rgb(50, 50, 50)";
+		var shift = 10;
+		ctx.fillRect(800 + shift, 0 + shift, 200 - shift * 2, 600 - shift * 2);
+		
+		var d = new Date();
+		var r = 30;
+		var g = 160;
+		var b = 50;
+
+		ctx.fillStyle = "rgb(" + r + ", " + g + ", " + b + ")";
+		ctx.fillText("Total Tiles: " + isometricMapInfo.length * isometricMapInfo[0].length, 815, 25); 
+		
+		ctx.fillText("Map Shift X: " + worldShift.xShift, 815, 40);
+		ctx.fillText("Map Shift Y: " + worldShift.yShift, 815, 55);
+		
+		ctx.fillText("Mouse X: " + mouse.mx, 815, 80);
+		ctx.fillText("Mouse Y: " + mouse.my, 815, 95);
+		
+		ctx.fillText("OnMouseTile mapX: " + lastMouseOnTile.mapX, 815, 120);
+		ctx.fillText("OnMouseTile mapY: " + lastMouseOnTile.mapY, 815, 135);
+		
+		ctx.fillText("Max air objects: " + airController.maxQuantity, 815, 160);
+		ctx.fillText("Current air objects: " + airController.airSet.length, 815, 175);
+		ctx.fillText("Cooldown: " + airController.cooldown + " MS", 815, 190);
+		ctx.fillText("Cd progress: " + airController.currentProgress + " MS", 815, 205);
+	
+		ctx.fillText("Total Render Checks: " + totalChecks, 815, 230);
+		ctx.fillText("Total Render: " + totalDraws, 815, 245);
+		
+		ctx.fillText("SELECTED TILE", 840, 450);
+		ctx.drawImage(tileSheet, 64 * uiSelect.ix, 32 * uiSelect.iy, 64, 32, 865, 470, 64, 32);
+		
+		ctx.fillText("Selected Tile X: " + uiSelect.ix, 815, 520);
+		ctx.fillText("Selected Tile Y: " + uiSelect.iy, 815, 535);
+		
+		if(uiSelect.tileOn){
+			ctx.fillText("Tile swapping", 815, 550);
+		}
+		else{
+			ctx.fillText("Object putting", 815, 550);
+		}
+	}
+
+	
+	
+	//CALCULATION TOOLS----------------------------------------------------
+	
+	function distance(x1, y1, x2, y2){
+		return Math.sqrt(Math.pow(x1 - x2, 2) + Math.pow(y1 - y2, 2));
+	}
+	
+	//>= <= muhabbeti
+	//A nasty function checks if the given x, y point is in the given tile
+	
+	/*
+	function isPointInside(theTile, x, y){
+		if(x >= theTile.getXCoord() && x <= theTile.getXCoord() + 32){
+			if(y >= theTile.getYCoord() && y <= theTile.getYCoord() + 16){
+				var m_ay = theTile.getYCoord() + 16 - y;
+				var in_x_lim = 2 * m_ay;
+				if(x >= theTile.getXCoord() + in_x_lim){
+					return true;
+				}
+			}
+			if(y >= theTile.getYCoord() + 16 && y <= theTile.getYCoord() + 32){
+				var m_ay = y - theTile.getYCoord() - 16;
+				var in_x_lim = 2 * m_ay;
+				if(x >= theTile.getXCoord() + in_x_lim){
+					return true;
+				}
+			}
+		}	
+		if(x >= theTile.getXCoord()+ 32 && x <= theTile.getXCoord() + 64){
+			
+			if(y >= theTile.getYCoord() && y <= theTile.getYCoord() + 16){
+				var m_ay = y - theTile.getYCoord();
+				var in_x_lim = 2 * m_ay;
+				if(x <= theTile.getXCoord() + 32 + in_x_lim){
+					return true;
+				}
+			}
+			if(y >= theTile.getYCoord() + 16 && y <= theTile.getYCoord() + 32){
+				var m_ay = theTile.getYCoord() + 32 - y;
+				var in_x_lim = 2 * m_ay;
+				if(x <= theTile.getXCoord() + 32 + in_x_lim){
+					return true;
+				}
+			}
+			
+		}	
+		return false;
+	}
+	*/
+	
+	function isPointInside(theTile, x, y){
+		thePoint = new Point(x, y);
+		return pointInPolygon(thePoint, theTile.getExactBounds());
+	}
+	
+	//Inputs: Point, ArrayOfPoint
+	function pointInPolygon(thePoint, polygon){
+
+		var polySides = polygon.length;
+		
+		var i, j = polySides - 1;
+		var oddNodes = false;
+		
+		for (i=0; i<polySides; i++) {
+			if (polygon[i].py< thePoint.py && polygon[j].py>= thePoint.py
+			||  polygon[j].py< thePoint.py && polygon[i].py>= thePoint.py) {
+			if (polygon[i].px+(thePoint.py-polygon[i].py)/(polygon[j].py-polygon[i].py)*(polygon[j].px-polygon[i].px)<thePoint.px) {
+				oddNodes=!oddNodes; }}
+			j=i; 
+		}
+		
+		return oddNodes;
+	}
+	
+	function report(variables){
+		var str = "";
+		for(var i = 0; i < variables.length; i++){
+			str = str + ", " + variables[i];
+		}
+		alert(str);
+	}
+
+	function makeNegative(num){
+		if(num > 0){
+			return -1 * num;
+		}
+		else{
+			return num;
+		}
+	}
+	
+	function makePositive(num){
+		if(num > 0){
+			return num;
+		}
+		else{
+			return num * -1;
+		}
+	}
+	
+	
+	
+	
+	function setTimePassed(){
+		millis = new Date();
+	}
+	
+	function getTimePassed(){
+		var newDate = new Date();
+		var milliPassed = newDate.getTime() - millis.getTime();
+		return milliPassed;
+	}
+	
+	//gameLoop
+	function gameLoop(){
+		
+		update();
+		
+		draw();
+		
+		/*
+		var akif = new Image();
+		akif.src = "akiftile.png";
+		ctx.drawImage(akif, 
+					0, //These constants are based on tilesheet resolution
+					0,
+					64, 32,
+					100, 100,
+					64, 32);
+					*/
+		
+		//ctx.fillStyle = "rgb(100, 0, 0)";
+		ctx.font = "11pt Arial";
+		totalDraws = 0;
+		totalChecks = 0;
+
+		mouseHover();
+		
+		ctx.fillStyle = "rgb(30, 160, 50)";
+		ctx.fillText("fps: " + Math.round(1000 / getTimePassed()), 935, 80);
+		
+		setTimePassed();
+		
+		
+		/*
+		for efficiency but not necessary
+		if(mouse.isMoved){
+			mouseHover();
+		}
+		mouse.isMoved = false;
+		*/
+	}
+	
+    </script>  
+	
+	
+    <style type="text/css">  
+      canvas { border: 1px solid black; }  
+    </style> 
+	
+  </head>  
+  
+  
+  <body onload="init();">  
+    <canvas id="window" width="1000" height="600"></canvas>  
+  </body>  
+  
+  
+</html>  
+
+
+
+
+
+
+
+
+
+
