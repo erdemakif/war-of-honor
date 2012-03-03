@@ -91,7 +91,7 @@
 		SELECTOR = 0;
 		selectorObj = null;
 		
-		anim = new Animation();
+		anim = new AnimationHandler();
 		//braid = new Image();
 		//braid.src = "kid.png";
 		var ss = {"intervalX":5, "intervalY":12 ,"global":{"x":38 ,"y":257 }, "width":69, "height":109, "row":1 ,"column":4, "now":0, "gameX":10, "gameY":300, "speed":1}; //general properties to parse through spritesheet
@@ -472,12 +472,15 @@
 			var y = lastMouseOnTile.mapY;
 			selectorObj =  {x:e.offsetX, y:e.offsetY, options:["option1","option2","option3"], currW:5, currH:5, tileX:x, tileY:y};
 
-			anim.list.push( {'anim': function(time){selectorAnimation(time, selectorObj)}, 'priority':SELECTOR} );
-			
+			anim.addAnimation(selectorAnimation, selectorObj, SELECTOR);			
 		}
 	}
 	
 	function checkSelectorSelection(mouse){
+		/*COMPATIBILITY
+		* this part should be fixed
+		*
+		*/
 		var x = mouse.offsetX;
 		var y = mouse.offsetY;
 		
@@ -485,7 +488,7 @@
 		var interval = Math.PI*2 / selectorObj.options.length;
 		for(var i=0; i<selectorObj.options.length; i++){
 			if(distance(x,y, selectorObj.x+Math.sin(interval*i)*75, selectorObj.y-Math.cos(interval*i)*75) <= 20){
-				alert("option"+(i+1)+" clicked!");
+				//alert("option"+(i+1)+" clicked!");
 				lastMouseOnTile = isometricMapInfo[selectorObj.tileX][selectorObj.tileY];
 			}	
 		}
@@ -501,9 +504,9 @@
 		selectorObj = null;
 	}
 	
-	function selectorAnimation(t, s){
+	function selectorAnimation(s){
 	
-		if(t){
+		//if(t){
 			//alert("time");
 			if(s.currH < 150 || s.currW < 150  ){
 	       	 	s.currW += 20;
@@ -512,26 +515,26 @@
 				if(s.options.length == 0) return; //there's no reason to show a optionless selector. 
 				var interval = Math.PI*2 / s.options.length;
 				for(var i=0; i<s.options.length; i++){
-					ctx.drawImage(circle, s.x+Math.sin(interval*i)*75-20 + worldShift.getXShift(), s.y-Math.cos(interval*i)*75-20 + worldShift.getYShift(), 40, 40);	
+					ctx.drawImage(circle, s.x+Math.sin(interval*i)*75-20, s.y-Math.cos(interval*i)*75-20, 40, 40);	
 				} 
 			}
-	    	ctx.drawImage(circle, s.x-s.currW/2+ worldShift.getXShift(), s.y-s.currH/2+ worldShift.getYShift(), s.currW, s.currH);
-		}else{
+	    	ctx.drawImage(circle, s.x-s.currW/2, s.y-s.currH/2, s.currW, s.currH);
+		/*}else{
 			//alert("not time");
 			if(!(s.currH < 150 || s.currW < 150)){
 				if(s.options.length == 0) return; //there's no reason to show a optionless selector. 
 				var interval = Math.PI*2 / s.options.length;
 				for(var i=0; i<s.options.length; i++){
-					ctx.drawImage(circle, s.x+Math.sin(interval*i)*75-20+  worldShift.getXShift(), s.y-Math.cos(interval*i)*75-20 + worldShift.getYShift(), 40, 40);	
+					ctx.drawImage(circle, s.x+Math.sin(interval*i)*75-20, s.y-Math.cos(interval*i)*75-20, 40, 40);	
 				} 
 			}
-	    	ctx.drawImage(circle, s.x-s.currW/2+ worldShift.getXShift(), s.y-s.currH/2+ worldShift.getYShift(), s.currW, s.currH);
-		}
+	    	ctx.drawImage(circle, s.x-s.currW/2, s.y-s.currH/2, s.currW, s.currH);
+		}*/
 	    
 	}
 	//END SELECTOR CODE
 
-	function braidRunAnimation(t, s){
+	function braidRunAnimation(s){
 		if(t){
 			var x = s.global.x + (s.now%s.column)*(s.width+s.intervalY); 
 			var y = s.global.y + (Math.floor(s.now/s.column))*(s.height+s.intervalY);
@@ -1335,26 +1338,25 @@
 	}
 
 
-	function Animation(){
+	function AnimationHandler(){
 		/*
-		*do we really need sorting?
+		* priority olayı tam güzel değil ya :/
 		*/
-		this.currentTimePassed = 0;
-		this.list = new Array();
-		this.animationInterval = 1000/20;
 		
 		this.render = render;
+		this.addAnimation = addAnimation;
+		this.list = new Array();
 		
 		function render(){
-			this.currentTimePassed += getTimePassed();
-			//alert(this.currentTimePassed + " inteval"+this.animationInterval);
-			var time=this.currentTimePassed >= this.animationInterval;
 			this.list.sort(function(a,b){return a.priority<=b.priority});  
 		    for(var i=0; i<this.list.length; i++){
-		    	this.list[i].anim(time);
+		    	this.list[i].anim(this.list[i].world);
 		    }
-		    if(time) this.currentTimePassed = 0;
 			
+		}
+
+		function addAnimation(render, world, priority){
+			this.list.push({"anim":render, "world":world, "priority":priority });
 		}
 	}
 
