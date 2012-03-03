@@ -470,7 +470,7 @@
 			//
 			var x = lastMouseOnTile.mapX;
 			var y = lastMouseOnTile.mapY;
-			selectorObj =  {x:e.offsetX, y:e.offsetY, options:["option1","option2","option3"], currW:5, currH:5, tileX:x, tileY:y};
+			selectorObj =  {x:e.offsetX, y:e.offsetY, options:["option1","option2","option3"], currW:5, currH:5, tileX:x, tileY:y, timePassed:0, framerate:20};
 
 			anim.addAnimation(selectorAnimation, selectorObj, SELECTOR);			
 		}
@@ -504,10 +504,11 @@
 		selectorObj = null;
 	}
 	
-	function selectorAnimation(s){
-	
-		//if(t){
+	function selectorAnimation(s, time){
+		s.timePassed += time;
+		if(s.timePassed>=s.framerate){
 			//alert("time");
+			s.timePassed = 0;
 			if(s.currH < 150 || s.currW < 150  ){
 	       	 	s.currW += 20;
 	        	s.currH += 20;
@@ -519,7 +520,7 @@
 				} 
 			}
 	    	ctx.drawImage(circle, s.x-s.currW/2, s.y-s.currH/2, s.currW, s.currH);
-		/*}else{
+		}else{
 			//alert("not time");
 			if(!(s.currH < 150 || s.currW < 150)){
 				if(s.options.length == 0) return; //there's no reason to show a optionless selector. 
@@ -529,7 +530,7 @@
 				} 
 			}
 	    	ctx.drawImage(circle, s.x-s.currW/2, s.y-s.currH/2, s.currW, s.currH);
-		}*/
+		}
 	    
 	}
 	//END SELECTOR CODE
@@ -1337,20 +1338,42 @@
 		//player.drawn = false;
 	}
 
+	/* GUIDE : How to create animations 
+		
+		what you need to do is creating a render function (i will call it 'animRender' from now on)
+		- animRender has two parameters: (world, timePassed)
+			*first world information which holds neccessary data for update of your animation, a world is an object. inside of that object is up to you, only neccessary fields are 'timePassed:0' and 'framerate:(your call)' fields.
+			*second input is time passed until last call of your animRender function. You should add following lines to your animRender function's head. Overall skelethon of your function should look something like this:
 
+			function animRender(world, timePassed){
+				world.timePassed += timePassed;
+				if(world.timePassed>=world.framerate){
+					world.timePassed = 0; //reset timePassed
+					...update code here
+					...render code here
+				}else{
+					...only render code here
+				}
+			}
+	*/
 	function AnimationHandler(){
 		/*
 		* priority olayı tam güzel değil ya :/
+		*
+		* addanimation derken sadece render fonksiyonu alıyorum ama
+		  aslında renderin içinde update de yapılıo ayrılabilir onlar
 		*/
 		
 		this.render = render;
 		this.addAnimation = addAnimation;
 		this.list = new Array();
-		
+		this.currentTime = 0;
+
 		function render(){
+			var timePassed = getTimePassed();
 			this.list.sort(function(a,b){return a.priority<=b.priority});  
 		    for(var i=0; i<this.list.length; i++){
-		    	this.list[i].anim(this.list[i].world);
+		    	this.list[i].anim(this.list[i].world, timePassed);
 		    }
 			
 		}
