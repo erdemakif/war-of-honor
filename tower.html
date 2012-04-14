@@ -1,20 +1,6 @@
 <html>  
   <head>  
     <title>Isometric trials</title>  
-	<style type="text/css" >
-    *
-    {
-        border: 5px;
-        margin: 20px;
-        padding: 0;
-    }
-  
-    body
-    {
-        background-color: Black;
-        color: Silver;
-    }
-</style>
 
 <script type="text/javascript" src="calculation_tools.js"> </script> 
 <script type="text/javascript" src="listeners.js"> </script>
@@ -32,9 +18,20 @@
 <script type="text/javascript" src="GameLoop_DRAW.js"> </script>
 <script type="text/javascript" src="GameLoop_UPDATE.js"> </script>
 <script type="text/javascript" src="init_loaders.js"> </script>
-
+<script type="text/javascript" src="http://cdn.socket.io/stable/socket.io.js"></script>
+<link rel="stylesheet" href="ui.css" />
 <script type="text/javascript">  
+
 	
+	var socket = new io.Socket('localhost',{'port':8000});	
+	var test_button = function(){ 
+		socket.connect();
+		console.log(socket);
+	 	socket.on('connect', function(evt){ console.log('connected',evt) })
+	 	socket.on('message', function(evt){ console.log('got message',evt) })
+	 	socket.on('disconnect', function(evt){ console.log('disconnected',evt) })		
+	};
+
 	function setTimePassed(){
 		millis = new Date();
 		//asd
@@ -78,15 +75,28 @@
 </script>  
 	
 	
-    <style type="text/css">  
-      canvas { border: 1px solid black; }  
-    </style> 
-	
   </head>  
   
   
   <body onload="init();">  
-    <canvas id="window" width="1000" height="600"></canvas>  
+      	<div id="game">
+			<canvas id="window" width="1000" height="600"></canvas>  
+			<div id="ui">
+				<div id="top">
+					<button onclick="test_button()" class="button white">Node.js Test Tuþu</button>
+					<button class="button white">Mahmut Tuþu</button>
+					<button class="button white">Placeholder Tuþu</button>
+					<!-- <div id="coords">Mouse Coordinates: <span id="mouseX">0</span> px X <span id="mouseY">0</span> px </div>
+					<div id="gold">Gold : <span id="gold">550</span></div> -->
+				</div>
+				<!-- <div id="nav">
+					<div id="nav-top"></div>
+					<div id="nav-left"></div>
+					<div id="nav-right"></div>
+					<div id="nav-bottom"></div>
+				</div> -->
+			</div>
+	</div>
   </body>  
   
   
