@@ -3,6 +3,7 @@ var http = require('http')
 
 var msg = "hey browser wassup"
 var decision = ["take my money", "I surrender take my life", "I see dead people"];
+var requests = 0;
 
 var server = http.createServer( function(req, res){
 	console.log(Math.random());
@@ -24,6 +25,7 @@ socket.sockets.on('connection', function (s) {
 			dec = decision[Math.round(Math.random()*2)];
 			console.log("requested: " + req.request + "returned decision: "+ dec);
 			res(dec);
+			requests++;
 		}
   	});
   	s.emit("message", msg);
@@ -31,3 +33,5 @@ socket.sockets.on('connection', function (s) {
 socket.sockets.on('disconnect', function (s){
 	console.log(s);
 });
+
+setInterval(function(){ console.log("REQUESTS PER SECOND = "+ requests +" req/sec"); requests=0;}, 1000);
