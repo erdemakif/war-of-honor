@@ -1,0 +1,40 @@
+<html>  
+  <head>  
+    <title>test</title>  
+<script type="text/javascript" src="http://localhost:8000/socket.io/socket.io.js"></script>
+<script type="text/javascript">  
+
+	var socket = io.connect('localhost',{'port':8000});	
+	
+	console.log(socket ? "connected to http://localhost:8000" : "failed to connect http://localhost:8000");
+
+	socket.on('connect', function(evt){ console.log('connected',evt) })
+	socket.on('message', function(evt){ console.log('got message', evt) })
+	socket.on('disconnect', function(evt){ console.log('disconnected',evt) })
+	
+	function requestSomething(){
+		socket.emit("request", {'request':"your money or your life"}, function(res){
+			if(res.indexOf("money") != -1)
+				console.log("got your money");
+			else if(res.indexOf("life") != -1)
+				console.log("life, the most valuable thing my son! go your way!");
+			else
+				console.log("then let the fight begin!");
+		});
+
+		setTimeout(function(){ requestSomething() }, 50);
+	}
+
+
+</script>  
+	
+	
+  	</head>  
+  
+  
+<body>  
+	<button onclick="requestSomething()" class="button white">request something</button>				
+  </body>  
+  
+  
+</html>  

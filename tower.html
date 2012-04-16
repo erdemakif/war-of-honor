@@ -18,18 +18,22 @@
 <script type="text/javascript" src="GameLoop_DRAW.js"> </script>
 <script type="text/javascript" src="GameLoop_UPDATE.js"> </script>
 <script type="text/javascript" src="init_loaders.js"> </script>
-<script type="text/javascript" src="http://cdn.socket.io/stable/socket.io.js"></script>
+<script type="text/javascript" src="server/libs/socket.io-client/lib/socket.js"></script>
 <link rel="stylesheet" href="ui.css" />
 <script type="text/javascript">  
 
 	
-	var socket = new io.Socket('localhost',{'port':8000});	
+	
 	var test_button = function(){ 
+		/*
+		var socket = new io.Socket('localhost',{'port':8000});	
 		socket.connect();
 		console.log(socket);
+
 	 	socket.on('connect', function(evt){ console.log('connected',evt) })
 	 	socket.on('message', function(evt){ console.log('got message',evt) })
-	 	socket.on('disconnect', function(evt){ console.log('disconnected',evt) })		
+	 	socket.on('disconnect', function(evt){ console.log('disconnected',evt) })
+	 	*/
 	};
 
 	function setTimePassed(){
@@ -60,7 +64,7 @@
 					*/
 		
 		//ctx.fillStyle = "rgb(100, 0, 0)";
-		ctx.font = "11pt Arial";
+		ctx.font = "11pt Arial"; ///bu gameloop un içinde ne arıyo bi kere çağırsak ya?
 		totalDraws = 0;
 		totalChecks = 0;
 
@@ -83,9 +87,7 @@
 			<canvas id="window" width="1000" height="600"></canvas>  
 			<div id="ui">
 				<div id="top">
-					<button onclick="test_button()" class="button white">Node.js Test Tuþu</button>
-					<button class="button white">Mahmut Tuþu</button>
-					<button class="button white">Placeholder Tuþu</button>
+					<button onclick="test_button()" class="button white">node.js</button>
 					<!-- <div id="coords">Mouse Coordinates: <span id="mouseX">0</span> px X <span id="mouseY">0</span> px </div>
 					<div id="gold">Gold : <span id="gold">550</span></div> -->
 				</div>
