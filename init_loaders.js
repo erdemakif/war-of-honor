@@ -49,7 +49,10 @@ function init(){
 	loadMapIndex();
 	
 	loadAirController();
-	
+	creatureController = new CreatureController();
+	for(var b = 0; b < 50; b++){
+		creatureController.creatures[b] = new Creature(300, 200);
+	}
 	//Testy things goes here LOL
 	totalDraws = 0;
 	totalChecks = 0;
@@ -61,7 +64,7 @@ function init(){
 	
 	uiSelect = new UserInterfaceSelect();
 	
-	firstborn = new Creature(200,100);
+	//firstborn = new Creature(200,100);
 	canvasWidth = 800;
 	canvasHeight = 600;
 	setInterval(gameLoop, 10);
@@ -141,9 +144,9 @@ function loadMap(){
 //loadRandomMap: [Void] -> [Void]
 function loadRandomMap(){
 	isometricMapInfo = new Array();
-	for(var i = 0; i < 20; i++){
+	for(var i = 0; i < 15; i++){
 		var cacheArray = new Array();
-		for(var j = 0; j < 20; j++){
+		for(var j = 0; j < 15; j++){
 			cacheArray[j] = new Tile(tileSheet, randomBetween(0, 6), 1, 64, 32,
 			32 * j + 20 + i * 32,
 			i * 32 + j * -16 + 100 + i * - 16);

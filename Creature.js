@@ -35,12 +35,17 @@ function Creature(x,y){
 	this.drawn = false;
 	this.path = new Array();
 
+	this.color = {r : randomBetween(0, 255),
+				g : randomBetween(0, 255),
+				b : randomBetween(0, 255)}
+
 	//methods
 	this.renderSelf = renderSelf;
 	this.getXCoord = getXCoord;
 	this.getYCoord = getYCoord;
 	this.update = update;
 	this.init = init;
+
 	
 	//Call of initialization
 	this.init();
@@ -76,7 +81,8 @@ function Creature(x,y){
 
 	//renderSelf: [Void] -> [Void]
 	function renderSelf(){
-		ctx.fillStyle = "rgb(250,250,250)"
+		//ctx.fillStyle = "rgb(250,250,250)"
+		ctx.fillStyle = "rgb(" + this.color.r + "," + this.color.g + "," + this.color.b + ")"
 		ctx.fillRect(this.getXCoord(), this.getYCoord() - 40, 20, 40);
 	}
 

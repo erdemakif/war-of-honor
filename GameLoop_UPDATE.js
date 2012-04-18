@@ -20,12 +20,17 @@
 function update(){
 	userKeyUpdate();
 	airController.updateAir();
-	firstborn.update();
+	creatureController.update();
+	//firstborn.update();
 	
 	if(mouse.isDown && uiSelect.tileOn){
 		//lastMouseOnTile.source_ix = uiSelect.ix;
 		//lastMouseOnTile.source_iy = uiSelect.iy;
-		firstborn.path[firstborn.path.length] = lastMouseOnTile;
+		
+		//firstborn.path[firstborn.path.length] = lastMouseOnTile;
+
+		creatureController.creatures[0].xCoord = mouse.mx - worldShift.getXShift();
+		creatureController.creatures[0].yCoord = mouse.my - worldShift.getYShift();
 		
 		//firstborn.xCoord = mouse.mx - worldShift.getXShift();
 		//firstborn.yCoord = mouse.my - worldShift.getYShift();

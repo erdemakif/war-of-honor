@@ -19,6 +19,7 @@
 <script type="text/javascript" src="GameLoop_UPDATE.js"> </script>
 <script type="text/javascript" src="init_loaders.js"> </script>
 <script type="text/javascript" src="server/libs/socket.io-client/lib/socket.js"></script>
+<script type="text/javascript" src="CreatureController.js"></script>
 <link rel="stylesheet" href="ui.css" />
 <script type="text/javascript">  
 
@@ -49,6 +50,7 @@
 	
 	//gameLoop
 	function gameLoop(){
+		clearScreen();
 		update();
 		draw();
 		

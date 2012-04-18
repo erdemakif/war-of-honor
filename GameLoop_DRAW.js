@@ -26,7 +26,7 @@
 
 //draw: [Void] -> [Void] 
 function draw(){
-	clearScreen();
+	//clearScreen();
 	drawBaseTileLayer();
 	drawObjectsOn();
 
@@ -34,8 +34,13 @@ function draw(){
 	airController.renderAir();
 
 	drawUI();
+
+
+	for(var a = 0; a < creatureController.creatures.length; a++){
+		creatureController.creatures[a].drawn = false;		
+	}
 	
-	firstborn.drawn = false;
+	//firstborn.drawn = false;
 
 	/*
 	for(var y = 0; y < isometricMapInfo.length; y++){
@@ -55,6 +60,7 @@ function drawObjectsOn(){
 
 	//theTile = getTileAt(30, 30);
 	//theTile.renderObjectsOn();
+
 
 	
 	for(var i = 0; i < diagMap.length; i++){
@@ -83,6 +89,7 @@ function drawObjectsOn(){
 				continue;
 			}
 
+			/*
 			if(!firstborn.drawn &&
 			cacheTile.getYCoord() + 16 - firstborn.getYCoord() <= 16
 			&& cacheTile.getYCoord() + 16 - firstborn.getYCoord()>= 0){
@@ -92,7 +99,40 @@ function drawObjectsOn(){
 				
 				//Hangi tile da cizildigini gostermek icin
 				//ctx.fillRect(cacheTile.getXCoord() + 32, cacheTile.getYCoord() + 16, 10, 10);
-			}	
+			}
+			*/
+
+			// her tile da degil her sirada sor
+			/*
+			while(true){
+				if(creatureController.creatures.length != lastCreature &&
+				cacheTile.getYCoord() + 16 - creatureController.creatures[lastCreature].getYCoord() <= 16 &&
+				cacheTile.getYCoord() + 16 - creatureController.creatures[lastCreature].getYCoord() >= 0){
+				
+				creatureController.creatures[lastCreature].renderSelf();
+				lastCreature = lastCreature + 1;
+				}
+				else{
+					break;
+				}
+
+			}
+			*/
+
+			for(var a = 0; a < creatureController.creatures.length; a++){
+				if(creatureController.creatures[a].drawn == false &&
+				cacheTile.getYCoord() + 16 - creatureController.creatures[a].getYCoord() <= 16 &&
+				cacheTile.getYCoord() + 16 - creatureController.creatures[a].getYCoord() >= 0){
+					creatureController.creatures[a].renderSelf();
+					creatureController.creatures[a].drawn = true;
+				}
+			}
+
+
+			
+			//ctx.fillStyle = "rgb(255, 0, 0)"
+			//ctx.fillText(lastCreature, 100, 200);
+		
 			
 			cacheTile.renderObjectsOn();
 			
