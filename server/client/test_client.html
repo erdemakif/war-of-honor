@@ -1,0 +1,43 @@
+<html>  
+  <head>  
+    <title>test</title>  
+<script type="text/javascript" src="http://192.168.0.34:8000/socket.io/socket.io.js"></script>
+<script type="text/javascript">  
+
+	var socket = io.connect('192.168.0.34',{'port':8000});	
+	
+	console.log(socket ? "connected to http://192.168.0.34:8000" : "failed to connect http://192.168.0.34:8000");
+
+	socket.on('connect', function(){ 
+		/*
+			Here we are sending initial information to the server
+			such as browser info, ip address (if i can get) etc..
+		*/
+		socket.emit("browser_info", navigator.appName + " on a " + navigator.platform); // find a better name rather than browser_init 
+	});  
+	
+	socket.on('message', function(evt){ })
+	socket.on('disconnect', function(evt){ console.log('disconnected',evt) })
+
+	function onTextMessage(){
+		var name = document.getElementById('name').value;
+		var value = document.getElementById('value').value;
+		socket.emit("message", {'name':name, 'value':value});
+		//window.getElementsById('kutu').value = "";
+	}
+
+</script>  
+	
+	
+  	</head>  
+  
+  
+<body>  
+	<input id="name" type="text" NAME="name" ><br>
+	<input id="value" type="text" NAME="value" ><br>
+	<button id="msg" onClick="onTextMessage()">Submit</button>
+	
+</body>  
+  
+  
+</html>  
