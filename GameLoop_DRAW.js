@@ -52,7 +52,14 @@ function draw(){
 		}
 	}
 	*/
+
+	
+	//an1.getImagePiece().drawImageAt(100, 200);
+	//an1.update(30);
+	
+
 }
+
 
 //drawObjectsOn: [Void] -> [Void]
 function drawObjectsOn(){

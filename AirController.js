@@ -31,6 +31,9 @@
 		- getTimePassed: [Void] -> [Number]
 		Gets the total milliseconds passed until the lastCheck date's milliseconds
 
+		- deleteAirObject: [AirEnvironment] -> [Void]
+		Deletes the given Air Environment from the Air Set
+
 
 */
 
@@ -52,6 +55,16 @@ function AirController(imageSet, maxQuantity, minX, maxX){
 	
 	this.updateLastCheck = updateLastCheck;
 	this.getTimePassed = getTimePassed;
+	this.deleteAirObject = deleteAirObject;
+
+	//deleteAirObject: [AirEnvironment] -> [Void]
+	function deleteAirObject(airObj){
+		for(var i = 0; i < this.airSet.length; i++){
+			if(this.airSet[i] == airObj){
+				this.airSet.splice(i, 1);
+			}
+		}
+	}
 	
 	//updateLastCheck: [Void] -> [Void]
 	function updateLastCheck(){
@@ -72,39 +85,19 @@ function AirController(imageSet, maxQuantity, minX, maxX){
 	}
 	
 	//updateAir: [Void] -> [Void]
-	function updateAir(){
-		this.currentProgress += this.getTimePassed();
-		
-		
+	function updateAir(passedMs){
+		this.currentProgress += passedMs;
 		for(var i = 0; i < this.airSet.length; i++){
-			this.airSet[i].xCoord += this.airSet[i].xSpeed * this.getTimePassed() / 1000;
-			this.airSet[i].yCoord += this.airSet[i].ySpeed * this.getTimePassed() / 1000;
-
-			//Increase the alpha if it is not fully reached to the limit
-			if(this.airSet[i].alpha < 0.4 && this.airSet[i].xCoord < this.airSet[i].limitX){
-				this.airSet[i].alpha += this.getTimePassed() * 0.2 / 1000;
-			}
-			
-			else if(this.airSet[i].xCoord > this.airSet[i].limitX){
-				this.airSet[i].alpha -= this.getTimePassed() * 0.2 / 1000;
-				if(this.airSet[i].alpha < 0){	
-					this.airSet.splice(i, 1);
-					
-				}
-			}
+			this.airSet[i].update(passedMs);
 		}
-		
 		if(this.airSet.length < this.maxQuantity && this.currentProgress >= this.cooldown){
 			this.currentProgress = 0;
 			this.createProcess();
 		}
-		
-		this.updateLastCheck();
 	}
 	
 	//createProcess: [Void] -> [Void]
 	function createProcess(){
-		
 		var theImage = this.imageSet[randomBetween(0, 4)];
 		this.airSet[this.airSet.length] = new AirEnvironment(theImage , 0, 0, theImage.width
 		, theImage.height, randomBetween(-200, canvasWidth - 50) - worldShift.xShift * 7 / 5, 

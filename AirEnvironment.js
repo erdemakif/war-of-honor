@@ -47,6 +47,7 @@ function AirEnvironment(source, source_ix, source_iy, width, height, xCoord, yCo
 	this.getXCoord = getXCoord;
 	this.getYCoord = getYCoord;
 	this.renderSelf = renderSelf;
+	this.update = update;
 	
 	//renderSelf: [Void] -> [Void]
 	function renderSelf(){
@@ -58,6 +59,20 @@ function AirEnvironment(source, source_ix, source_iy, width, height, xCoord, yCo
 			this.getXCoord(), this.getYCoord(),
 			this.width, this.height);
 		ctx.globalAlpha = 1;
+	}
+
+	function update(passedMs){
+		this.xCoord += measureChangeByTime(xSpeed, passedMs);
+		this.yCoord += measureChangeByTime(ySpeed, passedMs);
+		if(this.alpha < 0.4 && this.xCoord < this.limitX){
+			this.alpha += measureChangeByTime(0.2, passedMs);
+		}
+		else if(this.xCoord > this.limitX){
+			this.alpha -= measureChangeByTime(0.2, passedMs);
+			if(this.alpha <= 0){
+				airController.deleteAirObject(this);
+			}
+		}
 	}
 	
 	//getXCoord: [Void] -> [Number]

@@ -47,17 +47,48 @@ function init(){
 	//loadMap();
 	loadRandomMap();
 	loadMapIndex();
+
+	anSheet = new Image();
+	anSheet.src = "images/warrior.png"
 	
+	animationController = new AnimationController()
 	loadAirController();
 	creatureController = new CreatureController();
-	for(var b = 0; b < 50; b++){
+	for(var b = 0; b < 4; b++){
 		creatureController.creatures[b] = new Creature(300, 200);
 	}
 	//Testy things goes here LOL
 	totalDraws = 0;
 	totalChecks = 0;
 	totalMouseHoverChecks = 0;
+
+	updateLastDate = new Date();
+
+	/*
+	anSheet = new Image();
+	anSheet.src = "images/animSheet.png"
+	*/
 	
+	/*
+	an1 = new Animation(110);
+	an1.run = true;
+	*/
+
+	/*
+	for(var z = 1; z <= 9; z++){
+		an1.addScene(new ImagePiece(tileSheet, 64 * z, 14 * 32, 64, 64));
+	}
+	*/
+
+	/*
+	for(var z = 0; z < 3; z++){
+		for(var u = 0; u < 8; u++)
+		//an1.addScene(new ImagePiece(anSheet, z * 40, 0, 40, 40));
+		an1.addScene(new ImagePiece(anSheet, u * 40, z * 40, 40, 40));
+	}
+	*/
+	
+
 	
 	//IMPORTANT STUFF
 	//aPoly = [new Point(100, 100 + 16), new Point(100 + 32, 100 + 32), new Point(100 + 64, 100 + 16), new Point(100 + 32, 100)];
@@ -67,7 +98,7 @@ function init(){
 	//firstborn = new Creature(200,100);
 	canvasWidth = 800;
 	canvasHeight = 600;
-	setInterval(gameLoop, 10);
+	setInterval(gameLoop, 30);
 }
 
 //addListeners: [Void] -> [Void]
@@ -158,6 +189,11 @@ function loadRandomMap(){
 				cacheArray[j].addNewEnvironmentSameWidth(tileSheet, randomBetween(1, 8), 14, 64, 64);
 				times--;
 			}
+			if(randomBetween(0,100) >= 60){
+				cacheArray[j].addNewEnvironmentSameWidth(tileSheet, 2, 28, 64, 128);
+			}
+
+
 			}
 			
 			

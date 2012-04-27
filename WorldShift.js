@@ -28,12 +28,12 @@ function WorldShift(){
 	
 	//getXShift: [Void] -> [Number] 
 	function getXShift(){
-		return this.xShift;
+		return Math.round(this.xShift);
 	}
 	
 	//getYShift: [Void] -> [Number] 
 	function getYShift(){
-		return this.yShift;
+		return Math.round(this.yShift);
 	}
 	
 }

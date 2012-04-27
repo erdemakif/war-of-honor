@@ -32,6 +32,8 @@ var uiSelect;
 
 var aPoly;
 
+var updateLastDate;
+
 var cnt;
 var totalDraws;
 var totalChecks;

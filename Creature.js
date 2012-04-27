@@ -35,9 +35,18 @@ function Creature(x,y){
 	this.drawn = false;
 	this.path = new Array();
 
+	/*
 	this.color = {r : randomBetween(0, 255),
 				g : randomBetween(0, 255),
 				b : randomBetween(0, 255)}
+				*/
+	this.creatureAnim = new Animation(110);
+	for(var z = 0; z < 3; z++){
+		for(var u = 0; u < 8; u++)
+		this.creatureAnim.addScene(new ImagePiece(anSheet, u * 40, z * 40, 40, 40));
+	}
+	this.creatureAnim.run = true;
+	animationController.addAnimation(this.creatureAnim);
 
 	//methods
 	this.renderSelf = renderSelf;
@@ -54,22 +63,19 @@ function Creature(x,y){
 	function init(){}
 
 	//update: [Void] -> [Void]
-	function update(){
+	function update(passedMs){
 		var vecX;
 		var vecY;
 		var angle;
-		var speed = 1
+		var speed = 25
 		if(this.path.length>0){
 			vecX = this.path[0].getXCoord() + 32 - this.getXCoord();
 			vecY = this.path[0].getYCoord() + 16 - this.getYCoord();
 			angle = Math.atan2(vecY, vecX);
-			//getTileAt(this.getXCoord(), this.getYCoord()).source_ix = 2;
-			//this.path[0].source_iy = 2;
-			//alert(this.path[0].getYCoord() + " " + this.getYCoord() + vecY);
-			//alert(angle);
-			this.xCoord += speed * Math.cos(angle);
-			this.yCoord += speed * Math.sin(angle);
-			//ctx.fillRect(this.path[0].getXCoord(), this.path[0].getYCoord(), 20, 20);
+
+			this.xCoord += measureChangeByTime(speed, passedMs) * Math.cos(angle);
+			this.yCoord += measureChangeByTime(speed, passedMs) * Math.sin(angle);
+
 			if(distance(this.path[0].getXCoord() + 32, this.path[0].getYCoord() + 16, this.getXCoord(), this.getYCoord()) <= 1){
 				this.path.splice(0, 1);
 			}
@@ -82,17 +88,21 @@ function Creature(x,y){
 	//renderSelf: [Void] -> [Void]
 	function renderSelf(){
 		//ctx.fillStyle = "rgb(250,250,250)"
+
+		/*
 		ctx.fillStyle = "rgb(" + this.color.r + "," + this.color.g + "," + this.color.b + ")"
 		ctx.fillRect(this.getXCoord(), this.getYCoord() - 40, 20, 40);
+		*/
+		this.creatureAnim.getImagePiece().drawImageAt(this.getXCoord(), this.getYCoord() - 30);
 	}
 
 	//getXCoord: [Void] -> [Number]
 	function getXCoord(){
-		return this.xCoord + worldShift.xShift;
+		return Math.round(this.xCoord) + worldShift.xShift;
 	}
 	
 	//getYCoord: [Void] -> [Number]
 	function getYCoord(){
-		return this.yCoord + worldShift.yShift;
+		return Math.round(this.yCoord) + worldShift.yShift;
 	} 
 }
