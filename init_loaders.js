@@ -45,7 +45,8 @@ function init(){
 	
 	loadImages();
 	//loadMap();
-	loadRandomMap();
+	//loadRandomMap();
+	loadTestMap();
 	loadMapIndex();
 
 	anSheet = new Image();
@@ -54,9 +55,11 @@ function init(){
 	animationController = new AnimationController()
 	loadAirController();
 	creatureController = new CreatureController();
+	/*
 	for(var b = 0; b < 4; b++){
 		creatureController.creatures[b] = new Creature(300, 200);
 	}
+	*/
 	//Testy things goes here LOL
 	totalDraws = 0;
 	totalChecks = 0;
@@ -98,7 +101,7 @@ function init(){
 	//firstborn = new Creature(200,100);
 	canvasWidth = 800;
 	canvasHeight = 600;
-	setInterval(gameLoop, 30);
+	setInterval(gameLoop, 50);
 }
 
 //addListeners: [Void] -> [Void]
@@ -168,6 +171,42 @@ function loadMap(){
 	
 	//lastMouseOnTile.addNewEnvironmentSameWidth(tileSheet, 1, 14, 64, 64);
 	
+	diagMap = new Array();
+	diagMap = getDiagVersionOfMap(isometricMapInfo);
+}
+
+function loadTestMap(){
+
+	/*
+	for(var M = 0; M < 10; M++){
+		this.creationList[M] = {second: M, xCoord: 50, yCoord: 110, path: [isometricMapInfo[0][1], isometricMapInfo[10][1], isometricMapInfo[10][5], isometricMapInfo[14][5]]}
+	}
+	*/
+	isometricMapInfo = new Array();
+	for(var i = 0; i < 15; i++){
+		var cacheArray = new Array();
+		for(var j = 0; j < 15; j++){
+
+			cacheArray[j] = new Tile(tileSheet, 0, 1, 64, 32, 32 * j + 20 + i * 32, i * 32 + j * -16 + 100 + i * - 16);
+
+			if(j == 1 && i < 12 || j == 0 && i < 12 || i == 10 && j > 0 && j < 8 || i == 11 && j > 0 && j < 7 ||j > 4 && j < 7 && i > 9){
+			
+			}
+
+			else{
+				cacheArray[j].addNewEnvironmentSameWidth(tileSheet, randomBetween(1, 8), 14, 64, 64);
+			}
+			
+		
+		}
+		isometricMapInfo[i] = cacheArray;
+	}
+	isometricMapInfo[4][0].addNewEnvironmentSameWidth(tileSheet, 2, 28, 64, 128);
+	isometricMapInfo[10][7].addNewEnvironmentSameWidth(tileSheet, 2, 28, 64, 128);
+	isometricMapInfo[13][6].addNewEnvironmentSameWidth(tileSheet, 2, 28, 64, 128);
+	isometricMapInfo[14][6].addNewEnvironmentSameWidth(tileSheet, 2, 28, 64, 128);
+	lastMouseOnTile = isometricMapInfo[4][4];
+
 	diagMap = new Array();
 	diagMap = getDiagVersionOfMap(isometricMapInfo);
 }

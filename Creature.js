@@ -33,6 +33,7 @@ function Creature(x,y){
 	this.xCoord = x;
 	this.yCoord = y;
 	this.drawn = false;
+	this.speed = 25;
 	this.path = new Array();
 
 	/*
@@ -40,7 +41,7 @@ function Creature(x,y){
 				g : randomBetween(0, 255),
 				b : randomBetween(0, 255)}
 				*/
-	this.creatureAnim = new Animation(110);
+	this.creatureAnim = new Animation(90);
 	for(var z = 0; z < 3; z++){
 		for(var u = 0; u < 8; u++)
 		this.creatureAnim.addScene(new ImagePiece(anSheet, u * 40, z * 40, 40, 40));
@@ -67,23 +68,24 @@ function Creature(x,y){
 		var vecX;
 		var vecY;
 		var angle;
-		var speed = 25
 		if(this.path.length>0){
 			vecX = this.path[0].getXCoord() + 32 - this.getXCoord();
 			vecY = this.path[0].getYCoord() + 16 - this.getYCoord();
 			angle = Math.atan2(vecY, vecX);
 
-			this.xCoord += measureChangeByTime(speed, passedMs) * Math.cos(angle);
-			this.yCoord += measureChangeByTime(speed, passedMs) * Math.sin(angle);
+			this.xCoord += measureChangeByTime(this.speed, passedMs) * Math.cos(angle);
+			this.yCoord += measureChangeByTime(this.speed, passedMs) * Math.sin(angle);
 
 			if(distance(this.path[0].getXCoord() + 32, this.path[0].getYCoord() + 16, this.getXCoord(), this.getYCoord()) <= 1){
 				this.path.splice(0, 1);
 			}
 		}
 		else if(this.path.length == 0){
-			this.path.push(isometricMapInfo[randomBetween(0, 10)][randomBetween(0, 10)]);
+			//this.path.push(isometricMapInfo[randomBetween(0, 10)][randomBetween(0, 10)]);
+			creatureController.deleteCreature(this);
 		}
 	}
+
 
 	//renderSelf: [Void] -> [Void]
 	function renderSelf(){

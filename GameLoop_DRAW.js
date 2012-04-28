@@ -248,7 +248,11 @@ function drawUI(){
 
 	ctx.fillText("Total Render Checks: " + totalChecks, 815, 230);
 	ctx.fillText("Total Render: " + totalDraws, 815, 245);
-	
+
+	ctx.fillText("Total Creatures: " + creatureController.creatures.length, 815, 270);
+
+	ctx.fillText("Total Animations: " + animationController.animations.length, 815, 295);
+
 	ctx.fillText("SELECTED TILE", 840, 450);
 	ctx.drawImage(tileSheet, 64 * uiSelect.ix, 32 * uiSelect.iy, 64, 32, 865, 470, 64, 32);
 	
