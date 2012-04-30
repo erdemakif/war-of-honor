@@ -13,19 +13,30 @@ var server = http.createServer( function(req, res){
 
 server.listen(8000); //listening port 8000
 
+sessions = {};
+
 var socket = sio.listen(server);
 socket.sockets.on('connection', function (s) {
 
-  	s.on('message', function (data) {
-    	console.log(data);
+  	sessions[s.id] = {gold:0};
+
+  	s.on('moregold', function(){
+  		sessions[s.id].gold++;
   	});
 
-  	s.on("browser_info", function(info){
-  		//here what to do with coming client's info
-  		console.log("Socket info: "+ s.id + " is  a " + info);
-  	});
+	s.on('message', function (data) {
+  		console.log(data);
+	});
+
+	s.on("browser_info", function(info){
+		//here what to do with coming client's info
+		console.log("Socket info: "+ s.id + " is  a " + info);
+	});
 
 });
+
+setInterval( function(){socket.sockets.emit("gold", sessions)} , 1000);
+
 socket.sockets.on('disconnect', function (s){
 	console.log(s);
 });

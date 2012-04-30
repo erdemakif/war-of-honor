@@ -19,11 +19,18 @@
 	socket.on('message', function(evt){ })
 	socket.on('disconnect', function(evt){ console.log('disconnected',evt) })
 
+	socket.on('gold', function(sessions){ 
+		document.getElementById('sessions').value = JSON.stringify(sessions);
+	})
+
 	function onTextMessage(){
 		var name = document.getElementById('name').value;
 		var value = document.getElementById('value').value;
-		socket.emit("message", {'name':name, 'value':value});
+		socket.emit("message", {'name':name, 'value':value}, function (res){ });
 		//window.getElementsById('kutu').value = "";
+	}
+	function moregold(){
+		socket.emit('moregold')
 	}
 
 </script>  
@@ -33,6 +40,8 @@
   
   
 <body>  
+	<textarea id="sessions" rows=20 column=20> </textarea>
+	<button id='more_gold' onclick="moregold()" >More Gold!!!</button><br>
 	<input id="name" type="text" NAME="name" ><br>
 	<input id="value" type="text" NAME="value" ><br>
 	<button id="msg" onClick="onTextMessage()">Submit</button>
