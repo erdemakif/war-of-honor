@@ -13,25 +13,24 @@ var server = http.createServer( function(req, res){
 
 server.listen(8000); //listening port 8000
 
-sessions = {};
 userInfo = {};
+sessions = {};
 
 
 var socket = sio.listen(server);
 socket.sockets.on('connection', function (s) {
 
   	s.on('moregold', function(){
-  		if(userInfo[s.id]){
-  			if(sessions[userInfo[s.id].username]) sessions[userInfo[s.id].username].gold++;	
+  		if(sessions[s.id]){
+  			if(userInfo[sessions[s.id].username]) userInfo[sessions[s.id].username].gold++;	
   		}
   		
   	});
 
 	s.on('login', function (data) {
-  		if(!sessions[data.username]){
-			userInfo[s.id] = {sId:s.id, username:data.username, pass:data.pass};
-	  		sessions[data.username] = {gold:0};	
-  		} 
+  		if(!userInfo[data.username])
+	  		userInfo[data.username] = {gold:0};	
+  		sessions[s.id] = {sId:s.id, username:data.username, pass:data.pass};
 	});
 
 	s.on("browser_info", function(info){
@@ -41,7 +40,7 @@ socket.sockets.on('connection', function (s) {
 
 });
 
-setInterval( function(){socket.sockets.emit("gold", sessions)} , 1000);
+setInterval( function(){socket.sockets.emit("gold", userInfo)} , 1000);
 
 socket.sockets.on('disconnect', function (s){
 	console.log(s);
