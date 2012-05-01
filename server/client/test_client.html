@@ -23,10 +23,10 @@
 		document.getElementById('sessions').value = JSON.stringify(sessions);
 	})
 
-	function onTextMessage(){
+	function login(){
 		var name = document.getElementById('name').value;
-		var value = document.getElementById('value').value;
-		socket.emit("message", {'name':name, 'value':value}, function (res){ });
+		var pass = document.getElementById('value').value;
+		socket.emit("login", {'username':name, 'pass':pass}, function (res){ });
 		//window.getElementsById('kutu').value = "";
 	}
 	function moregold(){
@@ -42,9 +42,11 @@
 <body>  
 	<textarea id="sessions" rows=20 column=20> </textarea>
 	<button id='more_gold' onclick="moregold()" >More Gold!!!</button><br>
+	username:
 	<input id="name" type="text" NAME="name" ><br>
+	pass:
 	<input id="value" type="text" NAME="value" ><br>
-	<button id="msg" onClick="onTextMessage()">Submit</button>
+	<button id="msg" onClick="login()">Submit</button>
 	
 </body>  
   

@@ -14,18 +14,24 @@ var server = http.createServer( function(req, res){
 server.listen(8000); //listening port 8000
 
 sessions = {};
+userInfo = {};
+
 
 var socket = sio.listen(server);
 socket.sockets.on('connection', function (s) {
 
-  	sessions[s.id] = {gold:0};
-
   	s.on('moregold', function(){
-  		sessions[s.id].gold++;
+  		if(userInfo[s.id]){
+  			if(sessions[userInfo[s.id].username]) sessions[userInfo[s.id].username].gold++;	
+  		}
+  		
   	});
 
-	s.on('message', function (data) {
-  		console.log(data);
+	s.on('login', function (data) {
+  		if(!sessions[data.username]){
+			userInfo[s.id] = {sId:s.id, username:data.username, pass:data.pass};
+	  		sessions[data.username] = {gold:0};	
+  		} 
 	});
 
 	s.on("browser_info", function(info){
