@@ -30,20 +30,9 @@ function update(){
 	userKeyUpdate(milliPassed);
 	airController.updateAir(milliPassed);
 	creatureController.update(milliPassed);
+	towerController.update(milliPassed);
 	animationController.updateAll(milliPassed);
 	
-	if(mouse.isDown && uiSelect.tileOn){
-		//lastMouseOnTile.source_ix = uiSelect.ix;
-		//lastMouseOnTile.source_iy = uiSelect.iy;
-	
-		creatureController.creatures[0].xCoord = mouse.mx - worldShift.getXShift();
-		creatureController.creatures[0].yCoord = mouse.my - worldShift.getYShift();
-	}
-	
-	else if(mouse.isDown && !uiSelect.tileOn && !uiSelect.oneObjectPut){
-		lastMouseOnTile.addNewEnvironmentSameWidth(tileSheet, 2, 28, 64, 128);
-		uiSelect.oneObjectPut = true;
-	}
 	
 }
 

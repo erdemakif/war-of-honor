@@ -9,6 +9,8 @@
 <script type="text/javascript" src="KeyboardInfo.js"> </script>
 <script type="text/javascript" src="MouseInfo.js"> </script>
 <script type="text/javascript" src="Creature.js"> </script>
+<script type="text/javascript" src="tower.js"> </script>
+<script type="text/javascript" src="TowerController.js"> </script>
 <script type="text/javascript" src="AirEnvironment.js"> </script>
 <script type="text/javascript" src="AirController.js"> </script>
 <script type="text/javascript" src="Environment.js"> </script>
@@ -89,7 +91,6 @@
   
   <body onload="init();">  
       	<div id="game">
-			<canvas id="window" width="1000" height="600"></canvas>  
 			<div id="ui">
 				<div id="top">
 					<button onclick="test_button()" class="button white">node.js</button>
@@ -102,6 +103,12 @@
 					<div id="nav-right"></div>
 					<div id="nav-bottom"></div>
 				</div> -->
+				<div id="gamecanvas">
+					<canvas id="window" width="1000" height="600"></canvas> 
+				</div>
+				<div id="bottom">
+					
+				</div>
 			</div>
 	</div>
   </body>  

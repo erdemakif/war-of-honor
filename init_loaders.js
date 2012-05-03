@@ -51,10 +51,14 @@ function init(){
 
 	anSheet = new Image();
 	anSheet.src = "images/warrior.png"
+
+	towerSheet = new Image();
+	towerSheet.src = "images/turret.png"
 	
 	animationController = new AnimationController()
 	loadAirController();
 	creatureController = new CreatureController();
+	towerController = new TowerController();
 	/*
 	for(var b = 0; b < 4; b++){
 		creatureController.creatures[b] = new Creature(300, 200);

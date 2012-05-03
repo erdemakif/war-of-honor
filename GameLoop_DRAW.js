@@ -134,6 +134,14 @@ function drawObjectsOn(){
 					creatureController.creatures[a].drawn = true;
 				}
 			}
+			/*for(var a = 0; a < towerController.towers.length; a++){
+				if(towerController.towers[a].drawn == false &&
+				cacheTile.getYCoord() + 16 - towerController.towers[a].getYCoord() <= 16 &&
+				cacheTile.getYCoord() + 16 - towerController.towers[a].getYCoord() >= 0){
+					towerController.towers[a].renderSelf();
+					towerController.towers[a].drawn = true;
+				}
+			}*/
 
 
 			
