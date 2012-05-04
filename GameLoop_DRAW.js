@@ -39,6 +39,35 @@ function draw(){
 	for(var a = 0; a < creatureController.creatures.length; a++){
 		creatureController.creatures[a].drawn = false;		
 	}
+	ctx.fillStyle = "rgb(255, 0, 0)";
+	for(var i = 0; i < towerController.towers.length; i++){
+		var theX = towerController.towers[i].getXCoord();
+		var theY = towerController.towers[i].getYCoord();
+		var radius = towerController.towers[i].range;
+
+		ctx.fillRect(theX, theY, 3, 3);
+
+		
+		ctx.globalAlpha = 0.3;
+		//ctx.fillRect(theX - radius , theY - radius , radius * 2, radius * 2);
+		
+		ctx.beginPath();
+		ctx.arc(theX,theY, radius,0,Math.PI*2,true);
+		ctx.closePath();
+		ctx.fill();
+		ctx.globalAlpha = 1.0;
+	}
+
+	ctx.fillStyle = "rgb(0, 255, 255)";
+	for(var i = 0; i < creatureController.creatures.length; i++){
+		var theX = creatureController.creatures[i].getXCoord();
+		var theY = creatureController.creatures[i].getYCoord();
+		var radius = 5;
+
+		ctx.fillRect(theX, theY, 3, 3);
+
+
+	}
 	
 	//firstborn.drawn = false;
 
