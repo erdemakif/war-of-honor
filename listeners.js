@@ -82,7 +82,8 @@ function onMouseClickListener(e){
 	mouse.setNewMxMy(x, y);
 	
 	mouse.isDown = true;
-	
+	lastMouseOnTile.addNewEnvironmentSameWidth(towerSheet, 0, 0, 64,64);
+	towerController.addTower(new Tower(1, lastMouseOnTile.xCoord , lastMouseOnTile.yCoord));
 	/*
 	lastMouseOnTile.source_ix = uiSelect.ix;
 	lastMouseOnTile.source_iy = uiSelect.iy;
