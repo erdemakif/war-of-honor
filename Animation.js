@@ -1,4 +1,5 @@
 function Animation(changeTime){
+
 	this.atScene = 0;
 	this.scenes = new Array();
 	this.loop = true;
@@ -52,6 +53,7 @@ function Animation(changeTime){
 		if(!this.isFinished && this.run){
 			return this.scenes[this.atScene];
 		}
-		alert("Animation: getImagePiece returns null");
+		//alert("Animation: getImagePiece returns null");
+		return this.scenes[this.atScene];
 	}
 }

@@ -101,7 +101,7 @@ function init(){
 	//firstborn = new Creature(200,100);
 	canvasWidth = 800;
 	canvasHeight = 600;
-	setInterval(gameLoop, 50);
+	setInterval(gameLoop, 10);
 }
 
 //addListeners: [Void] -> [Void]
