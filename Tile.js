@@ -46,11 +46,16 @@
 function Tile(source, source_ix, source_iy, width, height, xCoord, yCoord){
 
 	//variables
-	this.source = source;
-	this.source_ix = source_ix;
-	this.source_iy = source_iy;
+	
+	//this.source = source;
+	//this.source_ix = source_ix;
+	//this.source_iy = source_iy;
 	this.width = width;
 	this.height = height;
+	
+
+	this.selfImage = new ImagePiece(source, source_ix, source_iy, width, height);
+
 	this.xCoord = xCoord;
 	this.yCoord = yCoord;
 	this.bounds = [new Point(this.xCoord, this.yCoord + this.height/2), new Point(this.xCoord + this.width/2, this.yCoord + this.height), 
@@ -98,12 +103,15 @@ function Tile(source, source_ix, source_iy, width, height, xCoord, yCoord){
 		
 		if(this.inScreen()){
 			//ctx.fillText(this.mapX + " " + this.mapY, this.getXCoord() + 5, this.getYCoord() + 5);
+			/*
 			ctx.drawImage(this.source, 
 				this.source_ix * this.width,
 				this.source_iy * this.height,
 				this.width, this.height,
 				this.getXCoord(), this.getYCoord(),
 				this.width, this.height);
+*/
+			this.selfImage.drawImageAt(this.getXCoord(), this.getYCoord());
 
 			if(this.isMouseOn){this.renderSelfLighted("rgba(225, 225, 125, 0.4)");}
 			

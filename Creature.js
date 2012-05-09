@@ -33,21 +33,7 @@ function Creature(x,y){
 	this.xCoord = x;
 	this.yCoord = y;
 	this.drawn = false;
-	this.speed = 25;
 	this.path = new Array();
-
-	/*
-	this.color = {r : randomBetween(0, 255),
-				g : randomBetween(0, 255),
-				b : randomBetween(0, 255)}
-				*/
-	this.creatureAnim = new Animation(90);
-	for(var z = 0; z < 3; z++){
-		for(var u = 0; u < 8; u++)
-		this.creatureAnim.addScene(new ImagePiece(anSheet, u * 40, z * 40, 40, 40));
-	}
-	this.creatureAnim.run = true;
-	animationController.addAnimation(this.creatureAnim);
 
 	//methods
 	this.renderSelf = renderSelf;
@@ -61,7 +47,19 @@ function Creature(x,y){
 	this.init();
 
 	//init: [Void] -> [Void]
-	function init(){}
+	function init(){
+		this.maxHp = 100;
+		this.currentHp = this.maxHp;
+		this.armor = 5;
+		this.creatureAnim = new Animation(90);
+		this.speed = 25;
+		for(var z = 0; z < 3; z++){
+			for(var u = 0; u < 8; u++)
+				this.creatureAnim.addScene(new ImagePiece(anSheet, u * 40, z * 40, 40, 40));
+			}
+			this.creatureAnim.run = true;
+			animationController.addAnimation(this.creatureAnim);
+		}
 
 	//update: [Void] -> [Void]
 	function update(passedMs){
