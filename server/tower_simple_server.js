@@ -3,6 +3,7 @@ var http = require('http');
 	fs = require('fs');
 	static = require('node-static');
 	redis = require('redis');
+	async = require('async');
 
 var db = redis.createClient(); //no port spesified meaning both redis and node working locally
 var dbUSERS = "USERS";
@@ -24,7 +25,9 @@ socket.set("origins = *:*"); //to solve: Origin null is not allowed by Access-Co
 socket.sockets.on('connection', function (s) {
 
   	s.on('moregold', function(){
-  		//db.hget(dbUSERS, )
+  		/*db.hget(dbSESSIONS, s.id, function(err, res){
+  			db.hget(d)
+  		});
 
   		/*if(sessions[s.id]){
   			if(userInfo[sessions[s.id].username]) userInfo[sessions[s.id].username].gold++;	
@@ -34,15 +37,14 @@ socket.sockets.on('connection', function (s) {
 
 	s.on('login', function (data) {
 		//todo: can be changed with hsetnx (checks before putting if there is a field)
-		db.hget(dbUSERS, data.username, function(err, res){ 
-			console.log("err: "+err + " res: "+ res);
-			if(!res){
-				db.hset(dbUSERS, data.username, 
-					{gold:0, pass:data.pass, activeSessionID:data.id}, 
-					function(err2, set_res){ console.log("err: "+err2 + " res: "+ set_res);});
-			}
-		}); //if new user
-			
+		db.hsetnx(data.username, "gold", 0, function(err, res){
+			db.hset(data.username, "pass", data.pass);
+			db.hset(data.username, "activeSessionID", s.id);
+			console.log("success" , res);
+		});
+		db.sadd(dbUSERS, data.username);
+		
+		db.hset(dbSESSIONS, s.id, data.username);
 		/*
   		if(!userInfo[data.username])
 	  		userInfo[data.username] = {gold:0};	
@@ -52,6 +54,7 @@ socket.sockets.on('connection', function (s) {
 
 	s.on("browser_info", function(info){
 		//here what to do with coming client's info -- just for stats
+		//stats can be in another redis server?
 		db.rpush(dbSTATS, info, console.log("client connected: "+ info));
 		//console.log("Socket info: "+ s.id + " is  a " + info);
 	});
@@ -59,10 +62,26 @@ socket.sockets.on('connection', function (s) {
 });
 
 function broadcastGolds(){
-	//can be improved too complex
-
-
-	//console.log("golds sent!");
+	
+	db.smembers(dbUSERS, function(err, res){
+		async.map(res,
+			db.hkeys,
+			function(err, res){
+				console.log(res);
+				socket.sockets.emit("golds", res);
+			}
+		);
+	});
+	/*
+	db.hvals(dbUSERS, function(err, res){
+		var l = new Array();
+		res.map(function(o){
+			var obj = JSON.parse(o);
+			l.push({user:obj.user, gold:obj.gold});
+		});
+		socket.sockets.emit("golds", l);
+	});
+	//console.log("golds sent!");*/
 }
 
 setInterval( broadcastGolds, 1000);
