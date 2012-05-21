@@ -61,27 +61,22 @@ socket.sockets.on('connection', function (s) {
 
 });
 
+goldBroadcaster = db.multi();
+goldBroadcaster.smembers(dbUSERS, function(err, res){
+	goldGetter = db.multi();
+	for (var i=0; i<res.length; i++){
+		goldGetter.hget(res[i], "gold");
+	}
+	goldGetter.exec(function(err, replies){
+		response = [];
+		for (var i=0; i<res.length; i++){
+			response.push({user:res[i], gold:replies[i]});
+		}
+		socket.sockets.emit("golds", response);
+	});
+});
 function broadcastGolds(){
-	
-	db.smembers(dbUSERS, function(err, res){
-		async.map(res,
-			db.hkeys,
-			function(err, res){
-				console.log(res);
-				socket.sockets.emit("golds", res);
-			}
-		);
-	});
-	/*
-	db.hvals(dbUSERS, function(err, res){
-		var l = new Array();
-		res.map(function(o){
-			var obj = JSON.parse(o);
-			l.push({user:obj.user, gold:obj.gold});
-		});
-		socket.sockets.emit("golds", l);
-	});
-	//console.log("golds sent!");*/
+	goldBroadcaster.exec(function(err,replies){});
 }
 
 setInterval( broadcastGolds, 1000);
