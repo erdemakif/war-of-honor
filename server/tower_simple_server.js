@@ -34,6 +34,7 @@ socket.sockets.on('connection', function (s) {
   		}*/
   		
   	});
+  	
 
 	s.on('login', function (data) {
 		//todo: can be changed with hsetnx (checks before putting if there is a field)
