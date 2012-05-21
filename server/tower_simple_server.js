@@ -25,8 +25,8 @@ socket.set("origins = *:*"); //to solve: Origin null is not allowed by Access-Co
 socket.sockets.on('connection', function (s) {
 
   	s.on('moregold', function(){
-  		/*db.hget(dbSESSIONS, s.id, function(err, res){
-  			db.hget(d)
+  		db.hget(dbSESSIONS, s.id, function(err, res){
+  			db.hincrby(res, "gold", 1);
   		});
 
   		/*if(sessions[s.id]){
