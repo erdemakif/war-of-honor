@@ -86,5 +86,7 @@ socket.sockets.on('disconnect', function (s){
 	console.log(s);
 });
 
-//measurement
-//setInterval(function(){ console.log("REQUESTS PER SECOND = "+ requests +" req/sec"); requests=0;}, 1000);
+//SAVE_DB
+//do something rather than printing if an error occurs
+//asynchronously save db to disk each 10mins
+setInterval(function(){ db.bgsave(function(err){if(err){console.log(err);}}); }, 600000); 
