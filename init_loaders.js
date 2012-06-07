@@ -76,25 +76,6 @@ function init(){
 	anSheet.src = "images/animSheet.png"
 	*/
 	
-	/*
-	an1 = new Animation(110);
-	an1.run = true;
-	*/
-
-	/*
-	for(var z = 1; z <= 9; z++){
-		an1.addScene(new ImagePiece(tileSheet, 64 * z, 14 * 32, 64, 64));
-	}
-	*/
-
-	/*
-	for(var z = 0; z < 3; z++){
-		for(var u = 0; u < 8; u++)
-		//an1.addScene(new ImagePiece(anSheet, z * 40, 0, 40, 40));
-		an1.addScene(new ImagePiece(anSheet, u * 40, z * 40, 40, 40));
-	}
-	*/
-	
 
 	
 	//IMPORTANT STUFF
@@ -191,7 +172,7 @@ function loadTestMap(){
 		var cacheArray = new Array();
 		for(var j = 0; j < 15; j++){
 
-			cacheArray[j] = new Tile(tileSheet, 0, 1, 64, 32, 32 * j + 20 + i * 32, i * 32 + j * -16 + 100 + i * - 16);
+			cacheArray[j] = new Tile(tileSheet, 0, 32, 64, 32, 32 * j + 20 + i * 32, i * 32 + j * -16 + 100 + i * - 16);
 
 			if(j == 1 && i < 12 || j == 0 && i < 12 || i == 10 && j > 0 && j < 8 || i == 11 && j > 0 && j < 7 ||j > 4 && j < 7 && i > 9){
 			
