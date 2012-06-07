@@ -37,6 +37,7 @@ function Creature(x,y){
 
 	//methods
 	this.renderSelf = renderSelf;
+	this.renderHealthBar = renderHealthBar;
 	this.getXCoord = getXCoord;
 	this.getYCoord = getYCoord;
 	this.update = update;
@@ -49,7 +50,8 @@ function Creature(x,y){
 	//init: [Void] -> [Void]
 	function init(){
 		this.maxHp = 100;
-		this.currentHp = this.maxHp;
+		//this.currentHp = this.maxHp;
+		this.currentHp = 20
 		this.armor = 5;
 		this.creatureAnim = new Animation(90);
 		this.speed = 25;
@@ -94,6 +96,16 @@ function Creature(x,y){
 		ctx.fillRect(this.getXCoord(), this.getYCoord() - 40, 20, 40);
 		*/
 		this.creatureAnim.getImagePiece().drawImageAt(this.getXCoord(), this.getYCoord() - 30);
+		this.renderHealthBar();
+	}
+
+	function renderHealthBar(){
+		var redBarWidth = 20 - ((this.currentHp * 20) / this.maxHp)
+
+		ctx.fillStyle = "rgb(0,255,0)";
+		ctx.fillRect(this.getXCoord() + 12, this.getYCoord() - this.creatureAnim.getImagePiece().height + 10 , 20, 2);
+		ctx.fillStyle = "rgb(255,0,0)";
+		ctx.fillRect(this.getXCoord() + 12, this.getYCoord() - this.creatureAnim.getImagePiece().height + 10 , redBarWidth, 2);
 	}
 
 	//getXCoord: [Void] -> [Number]
