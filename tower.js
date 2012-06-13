@@ -15,7 +15,7 @@ function Tower(type,x,y){
 	animationController.addAnimation(this.towerAnim);
 
 	//methods
-	this.renderSelf = renderSelf;
+	//this.renderSelf = renderSelf;
 	this.getXCoord = getXCoord;
 	this.getYCoord = getYCoord;
 	this.update = update;
@@ -54,9 +54,11 @@ function Tower(type,x,y){
 
 
 	//renderSelf: [Void] -> [Void]
+	/*
 	function renderSelf(){
 		this.towerAnim.getImagePiece().drawImageAt(this.getXCoord(), this.getYCoord() - 30);
 	}
+	*/
 
 	//getXCoord: [Void] -> [Number]
 	function getXCoord(){
