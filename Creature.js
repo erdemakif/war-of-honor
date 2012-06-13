@@ -42,6 +42,7 @@ function Creature(x,y){
 	this.getYCoord = getYCoord;
 	this.update = update;
 	this.init = init;
+	this.receiveDamage = receiveDamage;
 
 	
 	//Call of initialization
@@ -51,7 +52,7 @@ function Creature(x,y){
 	function init(){
 		this.maxHp = 100;
 		//this.currentHp = this.maxHp;
-		this.currentHp = 20
+		this.currentHp = 100
 		this.armor = 5;
 		this.creatureAnim = new Animation(90);
 		this.speed = 25;
@@ -84,6 +85,14 @@ function Creature(x,y){
 			//this.path.push(isometricMapInfo[randomBetween(0, 10)][randomBetween(0, 10)]);
 			creatureController.deleteCreature(this);
 		}
+
+	}
+
+	function receiveDamage(amount){
+		this.currentHp = this.currentHp - amount;
+		if(this.currentHp <= 0){
+			creatureController.deleteCreature(this);
+		}
 	}
 
 
@@ -100,15 +109,6 @@ function Creature(x,y){
 	}
 
 	function renderHealthBar(){
-		/*
-		var redBarWidth = 20 - ((this.currentHp * 20) / this.maxHp)
-
-		ctx.fillStyle = "rgb(0,255,0)";
-		ctx.fillRect(this.getXCoord() + 12, this.getYCoord() - this.creatureAnim.getImagePiece().height + 10 , 20, 2);
-		ctx.fillStyle = "rgb(255,0,0)";
-		ctx.fillRect(this.getXCoord() + 12, this.getYCoord() - this.creatureAnim.getImagePiece().height + 10 , redBarWidth, 2);
-		*/
-
 		var greenBarWidth = (this.currentHp * 20) / this.maxHp;
 
 		ctx.fillStyle = "rgb(255,0,0)";
