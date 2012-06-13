@@ -100,12 +100,22 @@ function Creature(x,y){
 	}
 
 	function renderHealthBar(){
+		/*
 		var redBarWidth = 20 - ((this.currentHp * 20) / this.maxHp)
 
 		ctx.fillStyle = "rgb(0,255,0)";
 		ctx.fillRect(this.getXCoord() + 12, this.getYCoord() - this.creatureAnim.getImagePiece().height + 10 , 20, 2);
 		ctx.fillStyle = "rgb(255,0,0)";
 		ctx.fillRect(this.getXCoord() + 12, this.getYCoord() - this.creatureAnim.getImagePiece().height + 10 , redBarWidth, 2);
+		*/
+
+		var greenBarWidth = (this.currentHp * 20) / this.maxHp;
+
+		ctx.fillStyle = "rgb(255,0,0)";
+		ctx.fillRect(this.getXCoord() + 12, this.getYCoord() - this.creatureAnim.getImagePiece().height + 10 , 20, 2);
+		ctx.fillStyle = "rgb(0,255,0)";
+		ctx.fillRect(this.getXCoord() + 12, this.getYCoord() - this.creatureAnim.getImagePiece().height + 10 , greenBarWidth, 2);
+
 	}
 
 	//getXCoord: [Void] -> [Number]
