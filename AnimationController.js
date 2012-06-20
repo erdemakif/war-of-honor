@@ -13,6 +13,7 @@ function AnimationController(){
 	this.addAnimation = addAnimation;
 	this.createAnimation = createAnimation;
 	this.updateAll = updateAll;
+	this.renderAll = renderAll;
 	this.deleteAnimation = deleteAnimation;
 
 	function createAnimation(changeTime){
@@ -25,6 +26,12 @@ function AnimationController(){
 	function updateAll(passedMs){
 		for(var i=0; i<this.animations.length;i++){
 			this.animations[i].update(passedMs);
+		}
+	}
+
+	function renderAll(){
+		for(var i=0; i<this.animations.length;i++){
+			this.animations[i].renderSelf();
 		}
 	}
 

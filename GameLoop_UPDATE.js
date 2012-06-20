@@ -55,6 +55,10 @@ function userKeyUpdate(passedMs){
 	if(keyboard.s_key){
 		worldShift.yShift += measureChangeByTime(-400, passedMs);
 	}
+	if(keyboard.h_key){
+		mightymagician = new MightyMagician();
+		mightymagician.spell();
+	}
 }
 
 //mouseHover: [Void] -> [Void]

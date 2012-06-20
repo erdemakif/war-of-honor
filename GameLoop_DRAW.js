@@ -32,9 +32,11 @@ function draw(){
 
 	
 	airController.renderAir();
+	animationController.renderAll();
+
+	mightymagician.renderSelf();
 
 	drawUI();
-
 
 	for(var a = 0; a < creatureController.creatures.length; a++){
 		creatureController.creatures[a].drawn = false;		

@@ -18,4 +18,5 @@ function KeyboardInfo(){
 	this.s_key = false;
 	this.w_key = false;
 	this.isPressed = false;
+	this.h_key = false;
 }

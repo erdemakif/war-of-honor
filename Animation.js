@@ -11,10 +11,14 @@ function Animation(changeTime){
 
 	this.addScene = addScene;
 	this.update = update;
+	this.renderSelf = renderSelf;
 	this.getImagePiece = getImagePiece;
 
 	function addScene(newScene){
 		this.scenes[this.scenes.length] = newScene;
+	}
+
+	function renderSelf(){
 	}
 
 	function update(passedMs){
@@ -38,7 +42,7 @@ function Animation(changeTime){
 			}
 			else{
 				this.run = false;
-				//animationController.deleteAnimation(this);
+				animationController.deleteAnimation(this);
 			}
 		}
 

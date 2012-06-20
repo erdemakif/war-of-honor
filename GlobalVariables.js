@@ -45,3 +45,5 @@ var selectorObj;
 
 var anim;
 var braid;
+
+var mightymagician;

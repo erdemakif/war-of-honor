@@ -37,6 +37,11 @@ function keyHandlerDown(e){
 	keyboard.s_key = true;
 	keyboard.isPressed = true;
 	}
+	//h
+	if(keyCode == 72){
+		keyboard.h_key = true;
+		keyboard.isPressed = true;
+	}
 	
 	/*
 	if(keyCode == 49 || keyCode == 50 || keyCode == 51){
@@ -59,6 +64,8 @@ function keyHandlerUp(e){
 	if(keyCode == 87){keyboard.w_key = false;}
 	//s
 	if(keyCode == 83){keyboard.s_key = false;}
+	//h
+	if(keyCode == 72){keyboard.h_key = false;}
 }
 
 function onMoveListener(e){
