@@ -71,6 +71,9 @@ function init(){
 
 	updateLastDate = new Date();
 
+	worldShift.xShift = -60;
+	worldShift.yShift = 160;
+
 	/*
 	anSheet = new Image();
 	anSheet.src = "images/animSheet.png"
