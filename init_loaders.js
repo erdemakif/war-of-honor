@@ -37,28 +37,29 @@ function init(){
 	ctx = canvas.getContext('2d');  
 	globalA = 1;
 	//document.getElementById("tuxie").style.opacity = 0.2;
+	loadImages();
+	loadTestMap();
+	//loadMap();
+	//loadRandomMap();
+	loadMapIndex();
+
 	millis = new Date();
 	worldShift = new WorldShift();
 	mouse = new MouseInfo();
 	keyboard = new KeyboardInfo();
 	addListeners();
-	
-	loadImages();
-	//loadMap();
-	//loadRandomMap();
-	loadTestMap();
-	loadMapIndex();
+	loadAirController();
+	towerController = new TowerController();
+	animationController = new AnimationController()
+	creatureController = new CreatureController();
+	updateLastDate = new Date();
+
 
 	anSheet = new Image();
 	anSheet.src = "images/warrior.png"
-
 	towerSheet = new Image();
 	towerSheet.src = "images/turret.png"
-	
-	animationController = new AnimationController()
-	loadAirController();
-	creatureController = new CreatureController();
-	towerController = new TowerController();
+
 	/*
 	for(var b = 0; b < 4; b++){
 		creatureController.creatures[b] = new Creature(300, 200);
@@ -68,8 +69,6 @@ function init(){
 	totalDraws = 0;
 	totalChecks = 0;
 	totalMouseHoverChecks = 0;
-
-	updateLastDate = new Date();
 
 	worldShift.xShift = -60;
 	worldShift.yShift = 160;

@@ -104,7 +104,7 @@ function Creature(x,y){
 		ctx.fillStyle = "rgb(" + this.color.r + "," + this.color.g + "," + this.color.b + ")"
 		ctx.fillRect(this.getXCoord(), this.getYCoord() - 40, 20, 40);
 		*/
-		this.creatureAnim.getImagePiece().drawImageAt(this.getXCoord() - 17, this.getYCoord() - 30);
+		this.creatureAnim.drawImageAt(this.getXCoord() - 17, this.getYCoord() - 30);
 		this.renderHealthBar();
 	}
 

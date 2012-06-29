@@ -12,6 +12,7 @@ function Animation(changeTime){
 	this.addScene = addScene;
 	this.update = update;
 	this.getImagePiece = getImagePiece;
+	this.drawImageAt = drawImageAt;
 
 	function addScene(newScene){
 		this.scenes[this.scenes.length] = newScene;
@@ -53,7 +54,13 @@ function Animation(changeTime){
 		if(!this.isFinished && this.run){
 			return this.scenes[this.atScene];
 		}
-		//alert("Animation: getImagePiece returns null");
+		alert("Animation: getImagePiece returns null");
 		return this.scenes[this.atScene];
 	}
+
+	function drawImageAt(xCoord, yCoord){
+		this.scenes[this.atScene].drawImageAt(xCoord, yCoord);
+	}
+
+
 }
